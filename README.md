@@ -1,10 +1,10 @@
 
 # Secret Sharing Prototype
-DXC AWS Practice personnel have been using third party services to securely share data such as passwords and API keys. This  presents a risk to DXC and our customers as we do not control how the data are managed by third parties. This prototype web  application provides a secure data sharing service hosted on a DXC managed AWS account and using an AWS Parameter store for secure storage, encryption and deletion of data. 
+Personnel have been using third party services to securely share data such as passwords and API keys. This  presents a risk to NNN and our customers as we do not control how the data are managed by third parties. This prototype web  application provides a secure data sharing service hosted on a NNN managed AWS account and using an AWS Parameter store for secure storage, encryption and deletion of data. 
 
 # Deployment
 -   git clone n
--   serverless deploy --aws-profile cscdev-AWSAdmin (profile for DXC ANZ Dev1 AWS Account, ID 050040431264)
+-   serverless deploy --aws-profile cscdev-AWSAdmin (profile for NNN ANZ Dev1 AWS Account, ID 050040431264)
 -   note the API endpoints created e.g.
     -     POST - https://va2pi2fcvh.execute-api.us-east-1.amazonaws.com/dev/createSecret
     -     POST - https://va2pi2fcvh.execute-api.us-east-1.amazonaws.com/dev/getSecret
