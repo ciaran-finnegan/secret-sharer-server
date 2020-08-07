@@ -4,7 +4,7 @@ Personnel have been using third party services to securely share data such as pa
 
 # Deployment
 -   git clone n
--   serverless deploy --aws-profile cscdev-AWSAdmin (profile for NNN ANZ Dev1 AWS Account, ID 050040431264)
+-   serverless deploy --aws-profile cscdev-AWSAdmin (profile for Dev account)
 -   note the API endpoints created e.g.
     -     POST - https://va2pi2fcvh.execute-api.us-east-1.amazonaws.com/dev/createSecret
     -     POST - https://va2pi2fcvh.execute-api.us-east-1.amazonaws.com/dev/getSecret
