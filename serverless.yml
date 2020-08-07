@@ -1,0 +1,42 @@
+service: secret-sharer
+provider:
+  name: aws
+  profile: cscdev-AWSAdmin # development only, use --aws-profile profilename instead
+  region: us-east-1 # development only
+  runtime: nodejs12.x
+  tracing:
+    apiGateway: true
+    lambda: true
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "ssm:*" #debug only
+        - "ssm:PutParameter"
+        - "ssm:GetParameter"
+      Resource: ["arn:aws:ssm:*:*:*"]
+    - Effect: Allow
+      Action:
+        - kms:Decrypt
+      Resource: ["arn:aws:ssm:*:*:*"]
+    - Effect: Allow
+      Action:
+        - xray:PutTraceSegments
+        - xray:PutTelemetryRecords
+      Resource: "*"
+
+functions:
+  createSecret:
+    handler: handler.createSecret 
+    events:
+      - http:
+          method: post
+          path: createSecret
+          cors: true
+  
+  getSecret:
+    handler: handler.getSecret 
+    events:
+      - http:
+          method: post
+          path: getSecret
+          cors: true

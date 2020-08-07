@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Secret Sharing Prototype</h1>
+<h2>Generate a link and token to securely share a secret</h2>
+
+<p>Links and tokens can only be used once and will epire after 72 hours.</p>
+<p></p>
+<p></p>
+<p>
+    <form action="https://va2pi2fcvh.execute-api.us-east-1.amazonaws.com/dev/createSecret" method="POST">
+        <input type="input" name="honeypot" value="" style="display: none" tabindex="-1" autocomplete="off">
+        <label>
+        Secret:
+        <textarea name="secret" required></textarea>
+        </label>
+        <button type="submit">Create Secret Sharing Link</button>
+    </form>
+</p>
+<b><p> Status: </p></b>
+<strong><p id="createSecretStatus"></p></strong>
+<b></b><p> Secret URL: </p></b>
+<p id="createSecretURL"></p>
+<b></b><p> Token: </p></b>
+<p id="createSecretToken"></p>
+
+
+</body>
+</html>
+
+<script>
+    (() => {
+  const form = document.querySelector('form');
+
+  form.onsubmit = e => {
+    e.preventDefault();
+    // Escape if the honeypot has been filled
+    if (!!form.children.namedItem('honeypot').value) return;
+
+    // Prepare data to send
+    const data = {};
+    const formElements = Array.from(form);
+    formElements.map(input => (data[input.name] = input.value));
+
+    // Construct an HTTP request
+    var xhr = new XMLHttpRequest();
+    xhr.open(form.method, form.action, true);
+    xhr.setRequestHeader('Accept', 'application/json; charset=utf-8');
+    xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+
+    // Send the collected data as JSON
+    xhr.send(JSON.stringify(data));
+
+    // Callback function
+    xhr.onloadend = response => {
+      if (response.target.status === 200) {
+        // Success
+        form.reset();
+        createSecretStatus.innerHTML = "Success"
+        createSecretURL.innerHTML = JSON.parse(response.target.response).url
+        createSecretToken.innerHTML = JSON.parse(response.target.response).token
+      } else {
+        // Failure
+        createSecretStatus.innerHTML = 'Something went wrong, please try again.';
+        console.error(JSON.parse(response.target.response).message);
+      }
+    };
+  };
+})();
+</script>
+
