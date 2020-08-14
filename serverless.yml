@@ -1,16 +1,47 @@
 service: secret-sharer
+
+# Create an optimized package for our functions
+package:
+  individually: true
+
+plugins:
+  # Package our functions with Webpack
+  - serverless-bundle
+  - serverless-offline
+  # Load .env as environment variables
+  - serverless-dotenv-plugin 
+
+custom:
+  # Our stage is based on what is passed in when running serverless
+  # commands. Or fallsback to what we have set in the provider section.
+  stage: ${opt:stage, self:provider.stage}
+  # Set the table name here so we can use it while testing locally
+  tableName: ${self:custom.stage}-secrets
+
 provider:
   name: aws
-  profile: cscdev-AWSAdmin # development only, use --aws-profile profilename instead
-  region: us-east-1 # development only
+  # development only, use --aws-profile profilename instead
+  profile: cscdev-AWSAdmin
   runtime: nodejs12.x
+  stage: dev
+  # development only
+  region: us-east-1 
   tracing:
     apiGateway: true
     lambda: true
+
+  # These environment variables are made available to our functions
+  # under process.env.
+  environment:
+    tableName: ${self:custom.tableName}
+    environment:  dev
+    GETSECRET_URL: https://secret-sharer.s3-ap-southeast-2.amazonaws.com/getsecret.html?id=  
+    
   iamRoleStatements:
     - Effect: "Allow"
       Action:
-        - "ssm:*" #debug only
+      #Development only, restrict for production
+        - "ssm:*" 
         - "ssm:PutParameter"
         - "ssm:GetParameter"
       Resource: ["arn:aws:ssm:*:*:*"]
@@ -23,6 +54,17 @@ provider:
         - xray:PutTraceSegments
         - xray:PutTelemetryRecords
       Resource: "*"
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      # Development only, restrict for production
+      Resource: "arn:aws:dynamodb:us-east-1:*:*" 
 
 functions:
   createSecret:
@@ -40,3 +82,27 @@ functions:
           method: post
           path: getSecret
           cors: true
+  # New create secret handler with dynamoDB table to store expiry information and retrieval tokens
+  create:
+    handler: create.main
+    events:
+      - http:
+          path: putSecret
+          method: post
+          cors: true
+          # authorizer: aws_iam (not auth  for dev, consider for  production)
+  # New get secret handler using dynamoDB table
+  get:
+    handler: get.main
+    events:
+      - http:
+          path: getsecret
+          method: post
+          cors: true
+          # authorizer: aws_iam (not auth  for dev, consider for  production)
+# Create our resources with separate CloudFormation templates
+resources:
+  # API Gateway Errors
+  - ${file(resources/api-gateway-errors.yml)}
+  # DynamoDB
+  - ${file(resources/dynamodb-table.yml)}

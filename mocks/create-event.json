@@ -1,0 +1,8 @@
+{
+  "body": "{\"secret\": \"mock-secret\",\"expiresAt\":72,\"content\":\"mock-conent\",\"attachment\":\"mock-attachment.jpg\"}",
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}

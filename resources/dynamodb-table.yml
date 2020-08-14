@@ -1,0 +1,13 @@
+Resources:
+  SecretsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:custom.tableName}
+      AttributeDefinitions:
+        - AttributeName: secretId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: secretId
+          KeyType: HASH
+      # Set the capacity to auto-scale
+      BillingMode: PAY_PER_REQUEST

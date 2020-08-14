@@ -1,6 +1,13 @@
 {
   "dependencies": {
-    "serverless": "^1.77.1"
+    "serverless": "^1.77.1",
+    "uuid": "^7.0.3"
   },
-  "name": "secret-sharer"
+  "name": "secret-sharer",
+  "devDependencies": {
+    "aws-sdk": "^2.729.0",
+    "serverless-bundle": "^2.0.0",
+    "serverless-dotenv-plugin": "^3.0.0",
+    "serverless-offline": "^6.5.0"
+  }
 }

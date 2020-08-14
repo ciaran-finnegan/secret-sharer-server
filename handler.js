@@ -1,17 +1,9 @@
-'use strict';
 // Prototype, serverless  secret  sharing using AWS Parameter Store (free up to 10,000 records per account)
 // Not production ready, requires secret expiry, error handling, rate limiting and many other changes
 // ciaran@counterthreat.co
 
-const secrets = require('./secrets');
 const ssm = require('./aws-client');
 const { v4: uuidv4 } = require('uuid');
-
-// Disabled for testing, update here or in cloudformation via serverless.yml for production deployment
-function validOrigin(testOrigin) {
-  const VALID_ORIGINS = ['http://localhost:3000', 'https://secret-sharer.s3-ap-southeast-2.amazonaws.com'];
-  return VALID_ORIGINS.filter(origin => origin === testOrigin)[0] || VALID_ORIGINS[0];
-}
 
 
 module.exports.createSecret = (event, context, callback) => {
@@ -22,22 +14,22 @@ module.exports.createSecret = (event, context, callback) => {
 // add an expiry tag to the Parameter Store Secret
 // const origin = event.headers.Origin || event.headers.origin;
 
-const baseURL = 'https://secret-sharer.s3-ap-southeast-2.amazonaws.com/getsecret.html?id='
+const baseURL = 'https://secret-sharer.s3-ap-southeast-2.amazonaws.com/getsecret.html?id=';
 const formData = JSON.parse(event.body);
 const secret = formData.secret;
 const id = uuidv4();
 const token  = uuidv4();
 const secretPlusToken = secret + token;
 
-const params = { 
-  Name: id, 
+const params = {
+  Name: id,
   Description: "Created by Secret Manager Lambda Function",
   Value: secretPlusToken, // Parameter store  does not accept objects so conatenating secret string and uuidv4 has 36 characters
-  Type: 'SecureString', 
+  Type: 'SecureString',
   Overwrite: true
-}; 
-// console.debug(`Debug: Received new secret: ${secret}, name: ${id}, token: ${token}`); 
-console.info(`DReceived new secret, name: ${id}`); 
+};
+// console.debug(`Debug: Received new secret: ${secret}, name: ${id}, token: ${token}`);
+console.info(`DReceived new secret, name: ${id}`);
 
 ssm.putParameter(params, function(err, data) {
   if (err) {
@@ -47,7 +39,7 @@ ssm.putParameter(params, function(err, data) {
   else    {
     console.log(`Parameter store record created successfully.`);           // successful response
   }
-  
+
   const response = {
     statusCode: err ? 500 : 200, // if there is an error return a http statusCode 500, otherwise return 200
     headers: {
@@ -73,7 +65,7 @@ ssm.putParameter(params, function(err, data) {
 // Return with no response if the origin isn't white-listed
 
 // if (!validOrigin(origin)) return;
-  
+
 // callback(null, response);
 };
 
@@ -85,7 +77,7 @@ module.exports.getSecret = (event, context, callback) => {
   // Return the Secret
 
   // Global  variables  for prototyping, to be  removed
-  var message = ""; 
+  var message = "";
   var secret = "";
   var token = "";
 
@@ -95,13 +87,13 @@ module.exports.getSecret = (event, context, callback) => {
   const id = formData.id;
   const clientToken = formData.token;
 
-  //console.debug(`Received new secret retrieval request id: ${id}, token: ${clientToken}`); 
+  //console.debug(`Received new secret retrieval request id: ${id}, token: ${clientToken}`);
 
   var params = {
     Name: id,
     WithDecryption: true
   };
-  
+
   ssm.getParameter(params, function(err, data) {
     if (err) {
       console.warn(`Error getting Parameter: ${err}, Error Stack Trace : ${err.stack}`); // an error occurred
@@ -124,12 +116,11 @@ module.exports.getSecret = (event, context, callback) => {
     }
     else {
       console.log(`Successfully retrieved Parameter`); // Successfully retrieved Parameter
-      //console.debug(`Secret is : ${data.Parameter.Value.slice(0,-36)}`); 
-      //console.debug(`Token is : ${data.Parameter.Value.slice(-36)}`); 
+      //console.debug(`Secret is : ${data.Parameter.Value.slice(0,-36)}`);
+      //console.debug(`Token is : ${data.Parameter.Value.slice(-36)}`);
       //console.debug(`Client Token is : ${clientToken}`);
 
     token = data.Parameter.Value.slice(-36); // extract the last 36 characters (token)
-    
     // Validate token
     if (token === clientToken) {
       // Delete entry from parameter store prior to sending back to client
