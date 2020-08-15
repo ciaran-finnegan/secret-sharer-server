@@ -12,58 +12,44 @@
 <p>
     <form action="https://w331frxwn6.execute-api.us-east-1.amazonaws.com/dev/putSecret" method="POST">
         <input type="input" name="honeypot" value="" style="display: none" tabindex="-1" autocomplete="off">
-        <label>
-        Secret:
-        <textarea name="secret" required></textarea>
-        </label>
-        Expiry (hours):
-        <textarea name="expiresIn" required></textarea>
-        </label>
-        Pass Phrase:
-        <textarea name="passphrase" required></textarea>
-        </label>
+        <label for="secret">Secret:</label><br>
+        <textarea name="textarea" id="secret" name="secret" style="width:250px;height:150px;"></textarea><br>
+        <label for="expiresIn">Expiry (hours):</label><br>
+        <input type="number" id="expiresIn" name="expiresIn"><br>
+        <label for="passphrase">Pass Phrase:</label><br>
+        <input type="text" id="passphrase" name="passphrase"><br>
+        <label for="hint">Hint (optional):</label><br>
+        <input type="text" id="hint" name="hint"><br>
         <button type="submit">Create Secret Sharing Link</button>
     </form>
 </p>
-<b><p> Status: </p></b>
-<strong><p id="createSecretStatus"></p></strong>
-<b></b><p> Secret URL: </p></b>
-<p id="createSecretURL"></p>
-<b></b><p> Pass Phrase: </p></b>
-<p id="createSecretToken"></p>
-
+<p> Status: <strong><ins id="createSecretStatus"></ins></strong></p>
+<p> Secret Link: <strong><ins id="createSecretURL"></ins></strong></p>
+<p> Pass Phrase: <strong><ins id="xpassphrase"></ins></strong></p>
+<p> Hint: <strong><ins id="xhint"></ins></strong></p>
 
 </body>
 </html>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js" integrity="sha512-nOQuvD9nKirvxDdvQ9OMqe2dgapbPB7vYAMrzJihw5m+aNcf0dX53m6YxM4LgA9u8e9eg9QX+/+mPu8kCNpV2A==" crossorigin="anonymous"></script>
 
 <script>
-    const string = 'plaintext';
-    
-
     function generatePassPhrase() {
     // Use a more truly random password generator
         const form = document.querySelector('form');
     var length = 12,
-        charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*()-+",
         retVal = "";
     for (var i = 0, n = charset.length; i < length; ++i) {
         retVal += charset.charAt(Math.floor(Math.random() * n));
+        console.log (retVal);
     }
-    // Initialse passphrase
+    console.log (form.children.namedItem('passphrase').value);
+    // suggest a pass phrase in the form
     form.children.namedItem('passphrase').value = retVal;
+    // set the inital expiry to 72 hours
+    form.children.namedItem('expiresIn').value = 72;
     return retVal;
-}
-
-    const password = generatePassPhrase();
-    console.log(password);
-
-
-    var encrypted = CryptoJS.AES.encrypt(string, password);
-    console.log(encrypted.toString());
-
-    var decrypted = CryptoJS.AES.decrypt(encrypted, password);
-    
+} 
 </script>
 
 
@@ -102,6 +88,7 @@
 
     // Remove the passphrase before sending to web service
     delete data.passphrase;
+    delete data.textarea;
 
     console.log(`data.secret cipher: ${data.secret}`);
     console.log (data);
@@ -127,10 +114,15 @@
     xhr.onloadend = response => {
       if (response.target.status === 200) {
         // Success
+        console.log(`passphrase is: `, form.children.namedItem('passphrase').value);
+        let p = form.children.namedItem('passphrase').value;
+        let h = form.children.namedItem('hint').value;
+        console.log ('p is: ', p);
         form.reset();
-        createSecretStatus.innerHTML = "Success"
-        createSecretURL.innerHTML = JSON.parse(response.target.response).url
-        createSecretToken.innerHTML = passphrase
+        createSecretStatus.innerHTML = "Success";
+        createSecretURL.innerHTML = JSON.parse(response.target.response).url;
+        xpassphrase.innerHTML = p;
+        xhint.innerHTML = h;
       } else {
         // Failure
         createSecretStatus.innerHTML = 'Something went wrong, please try again.';
