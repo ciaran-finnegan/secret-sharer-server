@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
-<body>
+<body onload="generatePassPhrase()">
 
 <h1>Secret Sharing Prototype</h1>
 <h2>Generate a link and token to securely share a secret</h2>
+<h3>Prototype for new version with in browser encryption</h3>
 
 <p>Links and tokens can only be used once and will epire after 72 hours.</p>
 <p></p>
@@ -14,6 +15,9 @@
         <label>
         Secret:
         <textarea name="secret" required></textarea>
+        </label>
+        Pass Phrase:
+        <textarea name="passphrase" required></textarea>
         </label>
         <button type="submit">Create Secret Sharing Link</button>
     </form>
@@ -28,12 +32,46 @@
 
 </body>
 </html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js" integrity="sha512-nOQuvD9nKirvxDdvQ9OMqe2dgapbPB7vYAMrzJihw5m+aNcf0dX53m6YxM4LgA9u8e9eg9QX+/+mPu8kCNpV2A==" crossorigin="anonymous"></script>
+
+<script>
+    const string = 'plaintext';
+    
+
+    function generatePassPhrase() {
+    // Use a more truly random password generator
+        const form = document.querySelector('form');
+    var length = 12,
+        charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        retVal = "";
+    for (var i = 0, n = charset.length; i < length; ++i) {
+        retVal += charset.charAt(Math.floor(Math.random() * n));
+    }
+    // Initialse passphrase
+    form.children.namedItem('passphrase').value = retVal;
+    return retVal;
+}
+
+    const password = generatePassPhrase();
+    console.log(password);
+
+
+    var encrypted = CryptoJS.AES.encrypt(string, password);
+    console.log(encrypted.toString());
+
+    var decrypted = CryptoJS.AES.decrypt(encrypted, password);
+    
+</script>
+
+
 
 <script>
     (() => {
   const form = document.querySelector('form');
 
   form.onsubmit = e => {
+
+      
     e.preventDefault();
     // Escape if the honeypot has been filled
     if (!!form.children.namedItem('honeypot').value) return;
@@ -42,6 +80,36 @@
     const data = {};
     const formElements = Array.from(form);
     formElements.map(input => (data[input.name] = input.value));
+
+    console.log(`data.secret: ${data.secret}`);
+    console.log(`data.passphrase: ${data.passphrase}`);
+
+    // Encrypt the secret sting the passphrase
+    cipher = CryptoJS.AES.encrypt(data.secret, data.passphrase);
+    console.log(`encrypyted secret cipher: `, cipher.toString());
+    cipherString = cipher.toString();
+
+    // Replace the secret with cipher string
+    data.secret = cipherString;
+
+    // Debug only
+    const passphrase = data.passphrase;
+    var decrypted = CryptoJS.AES.decrypt(data.secret, passphrase);
+    console.log(`Decrypted Secret: `, decrypted.toString(CryptoJS.enc.Utf8));
+
+    // Remove the passphrase before sending to web service
+    delete data.passphrase;
+
+    console.log(`data.secret cipher: ${data.secret}`);
+    console.log (data);
+
+
+
+    // Debug only
+    var decrypted = CryptoJS.AES.decrypt(data.secret, passphrase);
+    console.log(`Decrypted Secret: `, decrypted.toString(CryptoJS.enc.Utf8));
+
+    
 
     // Construct an HTTP request
     var xhr = new XMLHttpRequest();
