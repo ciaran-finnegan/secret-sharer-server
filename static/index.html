@@ -16,6 +16,9 @@
         Secret:
         <textarea name="secret" required></textarea>
         </label>
+        Expiry (hours):
+        <textarea name="expiresIn" required></textarea>
+        </label>
         Pass Phrase:
         <textarea name="passphrase" required></textarea>
         </label>
@@ -26,7 +29,7 @@
 <strong><p id="createSecretStatus"></p></strong>
 <b></b><p> Secret URL: </p></b>
 <p id="createSecretURL"></p>
-<b></b><p> Token: </p></b>
+<b></b><p> Pass Phrase: </p></b>
 <p id="createSecretToken"></p>
 
 
@@ -127,7 +130,7 @@
         form.reset();
         createSecretStatus.innerHTML = "Success"
         createSecretURL.innerHTML = JSON.parse(response.target.response).url
-        createSecretToken.innerHTML = JSON.parse(response.target.response).token
+        createSecretToken.innerHTML = passphrase
       } else {
         // Failure
         createSecretStatus.innerHTML = 'Something went wrong, please try again.';
