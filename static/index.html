@@ -3,17 +3,17 @@
 <body onload="generatePassPhrase()">
 
 <h1>Secret Sharing Prototype</h1>
-<h2>Generate a link and token to securely share a secret</h2>
-<h3>Prototype for new version with in browser encryption</h3>
+<h3>Generate a link to securely share an expiring secret</h2>
+<h4>Links can only be used once and will expire after 72 hours maximum.</h3>
 
-<p>Links and tokens can only be used once and will epire after 72 hours.</p>
+<p></p>
 <p></p>
 <p></p>
 <p>
     <form action="https://w331frxwn6.execute-api.us-east-1.amazonaws.com/dev/putSecret" method="POST">
         <input type="input" name="honeypot" value="" style="display: none" tabindex="-1" autocomplete="off">
         <label for="secret">Secret:</label><br>
-        <textarea name="textarea" id="secret" name="secret" style="width:250px;height:150px;"></textarea><br>
+        <textarea name="secret" id="secret" style="width:250px;height:150px;"></textarea><br>
         <label for="expiresIn">Expiry (hours):</label><br>
         <input type="number" id="expiresIn" name="expiresIn"><br>
         <label for="passphrase">Pass Phrase:</label><br>
@@ -37,13 +37,11 @@
     // Use a more truly random password generator
         const form = document.querySelector('form');
     var length = 12,
-        charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*()-+",
+        charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*-+",
         retVal = "";
     for (var i = 0, n = charset.length; i < length; ++i) {
         retVal += charset.charAt(Math.floor(Math.random() * n));
-        console.log (retVal);
     }
-    console.log (form.children.namedItem('passphrase').value);
     // suggest a pass phrase in the form
     form.children.namedItem('passphrase').value = retVal;
     // set the inital expiry to 72 hours
@@ -65,41 +63,35 @@
     // Escape if the honeypot has been filled
     if (!!form.children.namedItem('honeypot').value) return;
 
-    // Prepare data to send
+    // Parse the form elements into the data object
     const data = {};
     const formElements = Array.from(form);
     formElements.map(input => (data[input.name] = input.value));
 
-    console.log(`data.secret: ${data.secret}`);
-    console.log(`data.passphrase: ${data.passphrase}`);
+    // Funky monkey stuff to be fixed (secret in textarea not being parsed)
+    // data.secret = form.children.namedItem('secret').value;
 
-    // Encrypt the secret sting the passphrase
+    // Generate a hash from the passphrase
+    const hash = CryptoJS.SHA256(data.passphrase);
+    // Add the hash
+    data.hash = hash.toString(CryptoJS.enc.Base64);
+
+    // Encrypt the secret string using the passphrase
     cipher = CryptoJS.AES.encrypt(data.secret, data.passphrase);
-    console.log(`encrypyted secret cipher: `, cipher.toString());
     cipherString = cipher.toString();
 
-    // Replace the secret with cipher string
-    data.secret = cipherString;
+    // Add the cipher to the object we send to the web service
+    data.cipher = cipherString;
 
     // Debug only
-    const passphrase = data.passphrase;
-    var decrypted = CryptoJS.AES.decrypt(data.secret, passphrase);
-    console.log(`Decrypted Secret: `, decrypted.toString(CryptoJS.enc.Utf8));
+    console.log('prototype debugging, to be removed');
+    console.log(`data.secret: ${data.secret}`);
+    console.log(`data.passphrase: ${data.passphrase}`);
+    console.log('data.hash: ', data.hash);
+    console.log(`cipher (secret encrypted with passphrase): `, cipher.toString());
+    const decrypted = CryptoJS.AES.decrypt(data.cipher, data.passphrase);
+    console.log(`Decrypted Secret (cipher decrypted with passphrase): `, decrypted.toString(CryptoJS.enc.Utf8));
 
-    // Remove the passphrase before sending to web service
-    delete data.passphrase;
-    delete data.textarea;
-
-    console.log(`data.secret cipher: ${data.secret}`);
-    console.log (data);
-
-
-
-    // Debug only
-    var decrypted = CryptoJS.AES.decrypt(data.secret, passphrase);
-    console.log(`Decrypted Secret: `, decrypted.toString(CryptoJS.enc.Utf8));
-
-    
 
     // Construct an HTTP request
     var xhr = new XMLHttpRequest();
@@ -108,8 +100,21 @@
     xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 
     // Send the collected data as JSON
-    xhr.send(JSON.stringify(data));
-
+   
+    async function sendData(data) {
+      try {
+      await delete data.secret;
+      await delete data.passphrase;
+      await delete data.textarea;
+      console.log ('Data to send to web service :', data);
+      xhr.send(JSON.stringify(data));
+    }
+    catch(e) {
+    console.log('Error!', e);
+  }
+}
+sendData(data);
+    
     // Callback function
     xhr.onloadend = response => {
       if (response.target.status === 200) {

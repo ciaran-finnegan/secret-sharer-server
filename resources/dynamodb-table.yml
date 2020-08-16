@@ -4,10 +4,10 @@ Resources:
     Properties:
       TableName: ${self:custom.tableName}
       AttributeDefinitions:
-        - AttributeName: secretId
+        - AttributeName: id
           AttributeType: S
       KeySchema:
-        - AttributeName: secretId
+        - AttributeName: id
           KeyType: HASH
       # Set the capacity to auto-scale
       BillingMode: PAY_PER_REQUEST

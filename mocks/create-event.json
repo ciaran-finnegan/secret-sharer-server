@@ -1,5 +1,5 @@
 {
-  "body": "{\"secret\": \"mock-secret\",\"expiresAt\":72,\"content\":\"mock-conent\",\"attachment\":\"mock-attachment.jpg\"}",
+  "body": "{\"cipher\": \"ciphertext\",\"expiresAt\":72,\"hash\":\"hashtext\",\"hint\":\"hinttext\",\"honeypot\":\"honeypotext\"}",
   "requestContext": {
     "identity": {
       "cognitoIdentityId": "USER-SUB-1234"

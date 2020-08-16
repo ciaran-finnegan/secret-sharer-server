@@ -6,19 +6,19 @@ AWS.config = {
     region:"us-east-1"
 };
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
-const ssm = new   AWS.SSM();
+const id = uuid.v4();
 
 export function main(event, context, callback) {
-  // Request body is passed in as a JSON encoded string in 'event.body'
-  const data = JSON.parse(event.body);
-  // Secret text submitted by client
-  const secret = data.secret;
   // URL for web form to retrieve secret
   const getSecretURL = process.env.GETSECRET_URL;
-  // Current dateTime
+  // Request body is passed in as a JSON encoded string in 'event.body'
+  const data = JSON.parse(event.body);
+  const cipher = data.cipher;
+  const hint = data.hint;
+  const hash = data.hash;
   const createdAt = Date.now();
   // Validate expiry in hours and force maximum permitted expiry to 72hrs
-  // A scheduled lambda function will delete expired secrets
+  // A scheduled lambda function will delete expired ciphers
   function validateExpiresAt(hours) {
     if (hours <= 72 && hours.isInteger) {
         let  expiresAt = Date.now() + (hours *  60 * 60 * 1000);
@@ -30,56 +30,33 @@ export function main(event, context, callback) {
       }
   }
   const expiresAt = validateExpiresAt(data.expiresAt);
-  // Name of parameter in Systems Manager Secret Store
-  const id = uuid.v4();
-  // Token required to retrieve Secret
-  const token  = uuid.v4();
-  // Set Type to Secure String to force encryption
-  // Over-writing not  permitted
-  const SSMparams = {
-    Name: id,
-    Description: "Created by Secret Manager Lambda Function",
-    Value: secret,
-    Type: 'SecureString',
-    Overwrite: false
-  };
-  // Create AWS Systems Manager encrypted parameter for secret
-  ssm.putParameter(SSMparams, (error, data) => {
-    // Set response headers to enable CORS (Cross-Origin Resource Sharing)
-    const headers = {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Credentials": true
-      };
 
-    // Return status code 500 on error
-    if (error) {
-      const response = {
-        statusCode: 500,
-        headers: headers,
-        body: JSON.stringify({ status: false, message: "Sorry that didn't work, please try again." })
-      };
-      console.error(`Error creating SSM  Parameter: \n`,error);
-      callback(null, response);
-      return;
-    }
-  });
-  // Re-factor required  to  only excute  if  ssm.purParameter  is  successful
-  // Create a DynamoDB item with the id, token and expiry for the secret
-  // 'Secret' contains the attributes of the item to be created
-  // - 'secretId': a unique uuid
-  // - 'content': parsed from request body
-  // - 'attachment': parsed from request body
+  // Create a DynamoDB item
+  // - 'id': a unique uuid
+  // - 'cipher' contains the cipher of the secret encrypted with a passphrase
+  // - 'hash' hash of passphrase
+  // - 'hint' optional hint for the passphrase
+  // - 'expiresAt' date/time to delete the item
+  // - 'content': parsed from request body, not yet implemented
+  // - 'attachment': parsed from request body, not yet implemented
   // - 'createdAt': current Unix timestamp
   const dynamoDBparams = {
     TableName: process.env.tableName,
     Item: {
-      secretId: id,
-      token:  token,
+      id: id,
+      cipher:  cipher,
+      hint: hint,
+      hash: hash,
       attachment: data.attachment,
       createdAt: createdAt,
       expiresAt: expiresAt
     }
   };
+// debugging
+console.log(`id:  ${id}`);
+console.log(`cipher:  ${cipher}`);
+console.log(`hint:  ${hint}`);
+console.log(`hash:  ${hash}`);
 console.log(`createdAt:  ${createdAt}`);
 console.log(`expiresAt:  ${expiresAt}`);
   dynamoDb.put(dynamoDBparams, (error, data) => {
@@ -108,7 +85,6 @@ console.log(`expiresAt:  ${expiresAt}`);
       body: JSON.stringify({
           status: true,
           url: getSecretURL + id,
-          token: token,
           message:  "Secret encrypted and stored successfully."
         })
     };

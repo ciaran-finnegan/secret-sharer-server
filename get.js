@@ -5,25 +5,19 @@ AWS.config = {
     region:"us-east-1"
 };
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
-const ssm = new   AWS.SSM();
 
 export function main(event, context, callback) {
-  // secretId is submitted by client as a path parameter
-  // not implemented
-  //const pathParameters = JSON.parse(event.pathParameters);
-  //const secretId = pathParameters.id;
   // Request body is passed in as a JSON encoded string in 'event.body'
   const data = JSON.parse(event.body);
   // secretID submitted as path query id=
-  const secretId = data.id;
-  // token submitted by  client
-  const clientToken = data.token;
+  const id = data.id;
+  // hash submitted by  client
+  const clientHash = data.hash;
   const params = {
     TableName: process.env.tableName,
     // 'Key' defines the key of the item to be retrieved
-    // - 'secretId': path parameter
     Key: {
-      secretId: secretId
+      id: id
     }
   };
 
@@ -39,65 +33,41 @@ export function main(event, context, callback) {
       const response = {
         statusCode: 500,
         headers: headers,
-        body: JSON.stringify({ status: false, message: "Error retrieving secret, your secret may have expired." })
+        body: JSON.stringify({ status: false, message: "Error retrieving cipher, your secret may have expired." })
       };
-      console.error(`Error retrieving secretId from DB: \n`,error);
+      console.error(`Error retrieving item from DB: \n`,error);
       callback(null, response);
       return;
     }
 
-    const storedToken = data.Item.token;
-    console.log(`storedToken: ${storedToken}`);
-    console.log(`clientToken: ${clientToken}`);
-    console.log(`secretId: ${secretId}`);
-    // if tokens match retrieve secret
-    if (storedToken !== clientToken) {
-        // Increment trys counter and send error to client
+    const storedHash = data.Item.hash;
+    console.log(`storedHash: ${storedHash}`);
+    console.log(`clientHash: ${clientHash}`);
+    console.log(`id: ${id}`);
+    // if passphrase hashes don't match return and error
+    if (storedHash !== clientHash) {
+        // Increment invalidHashRequest counter and send error to client
         const response = {
             statusCode: 500,
             headers: headers,
-            body: JSON.stringify({ status: false, message: "Error retrieving secret, invalid token" })
+            body: JSON.stringify({ status: false, message: "Error, passphrase hash not accepted" })
           };
-          console.error(`Error, invalid token submitted by client: `, clientToken);
+          console.error(`Error, invalid passphrase hash submitted by client: `, clientHash);
           callback(null, response);
         }
-
-    // Retrieve secret from Parameter  store, delete and send to client
-    var ssmParams = {
-            Name: secretId,
-            WithDecryption: true
-            };
-    ssm.getParameter(ssmParams, function(err, data) {
-        if (err) {
-            const response = {
-                statusCode: 500,
-                headers: headers,
-                body: JSON.stringify({ status: false, message: "Error retrieving secret" })
+    else {
+        const cipher = data.Item.cipher;
+          const response = {
+              statusCode: 200,
+              headers: headers,
+              body: JSON.stringify({
+                  status: true,
+                  cipher: cipher,
+                  message:  "Cipher has been retrieved"
+                  })
               };
-              console.error(`Error retrieving secret: `, clientToken);
-              callback(null, response);
-        }
-        else {
-            const secret = data.Parameter.Value;
-            const response = {
-                statusCode: 200,
-                headers: headers,
-                body: JSON.stringify({
-                    status: true,
-                    secret: secret,
-                    message:  "Your secret has been securely deleted"
-                    })
-                };
-            // We must delete the secret before returning the response to the client
-            ssm.deleteParameter({Name: secretId}, function(err, data) {
-            if (err) console.error(`Error deleting parameter`,err);
-            // Add proper error handling here
-            else console.log(`Parameter deleted`);
-            // Add callback to exit here
-            });
-            callback(null, response);
-        }
-    ; }
-    ); }
-    );
+          // We must delete the secret before returning the response to the client
+          callback(null, response);
+    }
+  });
 }

@@ -16,7 +16,7 @@ custom:
   # commands. Or fallsback to what we have set in the provider section.
   stage: ${opt:stage, self:provider.stage}
   # Set the table name here so we can use it while testing locally
-  tableName: ${self:custom.stage}-secrets
+  tableName: ${self:custom.stage}-ciphers
 
 provider:
   name: aws
@@ -67,22 +67,7 @@ provider:
       Resource: "arn:aws:dynamodb:us-east-1:*:*" 
 
 functions:
-  createSecret:
-    handler: handler.createSecret 
-    events:
-      - http:
-          method: post
-          path: createSecret
-          cors: true
-  
-  getSecret:
-    handler: handler.getSecret 
-    events:
-      - http:
-          method: post
-          path: getSecret
-          cors: true
-  # New create secret handler with dynamoDB table to store expiry information and retrieval tokens
+
   create:
     handler: create.main
     events:
@@ -91,7 +76,6 @@ functions:
           method: post
           cors: true
           # authorizer: aws_iam (not auth  for dev, consider for  production)
-  # New get secret handler using dynamoDB table
   get:
     handler: get.main
     events:
