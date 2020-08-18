@@ -1,9 +1,4 @@
 import AWS from "aws-sdk";
-
-// Development region only
-AWS.config = {
-    region:"us-east-1"
-};
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 export function main(event, context, callback) {
