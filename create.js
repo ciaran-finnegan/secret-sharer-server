@@ -1,10 +1,6 @@
 import * as uuid from "uuid";
 import AWS from "aws-sdk";
 
-// Development region only
-AWS.config = {
-    region:"us-east-1"
-};
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const id = uuid.v4();
 
