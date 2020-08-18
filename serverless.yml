@@ -21,11 +21,11 @@ custom:
 provider:
   name: aws
   # development only, use --aws-profile profilename instead
-  profile: cscdev-AWSAdmin
+  profile: ct-prod-serverless
   runtime: nodejs12.x
   stage: dev
   # development only
-  region: us-east-1 
+  region: ap-southeast-2
   tracing:
     apiGateway: true
     lambda: true
