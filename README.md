@@ -1,10 +1,21 @@
 
+
 # Secret Sharing Prototype
-Personnel have been using third party services to securely share data such as passwords and API keys. This  presents a risk to NNN and our customers as we do not control how the data are managed by third parties. This prototype web  application provides a secure data sharing service hosted on a NNN managed AWS account and using an AWS Parameter store for secure storage, encryption and deletion of data. 
+
+INCOMPLETE PROTOTYPE
+
+This prototype web  application provides a secure data sharing service hosted on AWS using dynamoDB to store encrypted data (cipher) and hash of the passphrase used to encrypt the data. The passphrase is not stored.
+
+Expired data is deleted and the cipher and hash are deleted when a cipher has been retrieved.
+
+# Dependencies
+Secret-sharer-client https://github.com/slartibastfast/secret-sharer-client.git
+AWS Account 
+Serverless Framework
 
 # Deployment
 -   git clone n
--   serverless deploy --aws-profile cscdev-AWSAdmin (profile for Dev account)
+-   serverless deploy --aws-profile AWS_PROFILE (e.g. cscdev-AWSAdmin)
 -   note the API endpoints created e.g.
     -     POST - https://va2pi2fcvh.execute-api.us-east-1.amazonaws.com/dev/createSecret
     -     POST - https://va2pi2fcvh.execute-api.us-east-1.amazonaws.com/dev/getSecret
@@ -16,13 +27,13 @@ Personnel have been using third party services to securely share data such as pa
 
 ## Managing changes
 The following command can be used to update an individual function
--   serverless deploy function -f getSecret --aws-profile cscdev-AWSAdmin
+-   serverless deploy function -f getSecret --aws-profile AWS_PROFILE e.g. cscdev-AWSAdmin
 The following command can be used to update the entire applicaton stack (takes longer)
--   serverless deploy --aws-profile cscdev-AWSAdmin
+-   serverless deploy --aws-profile AWS_PROFILE e.g. cscdev-AWSAdmin
 
 
 ## Debugging
-serverless logs -f getSecret --aws-profile cscdev-AWSAdmin --tail
+serverless logs -f getSecret --aws-profile --aws-profile AWS_PROFILE e.g. cscdev-AWSAdmin --tail
 
 
 

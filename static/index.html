@@ -68,8 +68,6 @@
     const formElements = Array.from(form);
     formElements.map(input => (data[input.name] = input.value));
 
-    // Funky monkey stuff to be fixed (secret in textarea not being parsed)
-    // data.secret = form.children.namedItem('secret').value;
 
     // Generate a hash from the passphrase
     const hash = CryptoJS.SHA256(data.passphrase);
