@@ -6,7 +6,7 @@ const id = uuid.v4();
 
 export function main(event, context, callback) {
   // URL for web form to retrieve secret
-  const getSecretURL = process.env.GETSECRET_URL;
+  // const getSecretURL = process.env.GETSECRET_URL;
   // Request body is passed in as a JSON encoded string in 'event.body'
   const data = JSON.parse(event.body);
   const cipher = data.cipher;
@@ -45,7 +45,11 @@ export function main(event, context, callback) {
       hash: hash,
       attachment: data.attachment,
       createdAt: createdAt,
-      expiresAt: expiresAt
+      expiresAt: expiresAt,
+      retrievedAt: 0,
+      retrieved: false,
+      failedRetrievals: 0,
+      lastFailedRetrievalAt: 0
     }
   };
 // debugging
@@ -80,7 +84,7 @@ console.log(`expiresAt:  ${expiresAt}`);
       headers: headers,
       body: JSON.stringify({
           status: true,
-          url: getSecretURL + id,
+          id: id,
           message:  "Secret encrypted and stored successfully."
         })
     };

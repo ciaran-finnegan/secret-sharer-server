@@ -34,14 +34,71 @@ export function main(event, context, callback) {
       callback(null, response);
       return;
     }
+    const cipher = data.Item.cipher;
+    const createdAt = data.Item.createdAt;
+    const expiresAt = data.Item.expiresAt;
+    const attachment = data.Item.attachment;
+    const hash = data.Item.hash;
+    const hint = data.Item.hint;
+    const failedRetrievals = data.Item.failedRetrievals;
+    let incrementFailedRetrievals = 1;
+    if (failedRetrievals) {
+      incrementFailedRetrievals = failedRetrievals + 1;
+    }
 
-    const storedHash = data.Item.hash;
-    console.log(`storedHash: ${storedHash}`);
+    console.log(`failedRetrievals: ${failedRetrievals}`);
+    console.log(`failedRetrievals type: ${typeof(failedRetrievals)}`);
+    console.log(`incrementFailedRetrievals: ${incrementFailedRetrievals}`);
+    console.log(`incrementFailedRetrievals type: ${typeof(incrementFailedRetrievals)}`);
+
+    console.log(`storedHash: ${hash}`);
     console.log(`clientHash: ${clientHash}`);
     console.log(`id: ${id}`);
-    // if passphrase hashes don't match return and error
-    if (storedHash !== clientHash) {
-        // Increment invalidHashRequest counter and send error to client
+    const now = Date.now();
+    // todo if retrieved is true return an error
+    // todo if expired return an error
+    if (now > expiresAt) {
+      const response = {
+          statusCode: 500,
+          headers: headers,
+          body: JSON.stringify({ status: false, message: "Error, secret has expired" })
+        };
+        console.error(`Error, secret has expired: `, id);
+        callback(null, response);
+      }
+    // todo if failed retrieval attempts >2 and lastFailedRetrievalAt is less than 1 hour ago return an error
+    // if passphrase hashes don't match return an error
+    if (hash !== clientHash) {
+        // Increment failedRetrievaals counter, update lastFailedRetrievalAt data and send error to client
+        console.log(typeof(incrementfailedRetrievals));
+        console.log(typeof(now));
+        console.log(typeof(id));
+
+        const x = {
+          TableName: process.env.tableName,
+          // 'Key' defines the key of the item to be retrieved
+          Key: {
+            id: id
+          },
+          Item: {
+            id: id,
+            cipher:  cipher,
+            hint: hint,
+            hash: hash,
+            attachment: attachment,
+            createdAt: createdAt,
+            expiresAt: expiresAt,
+            retrievedAt: 0,
+            retrieved: false,
+            failedRetrievals: incrementFailedRetrievals,
+            lastFailedRetrievalAt: now
+            }
+        };
+        dynamoDb.put(x, function(err, data) {
+          if (err)   {
+            console.error(`Error, failed to update Item: `, err);
+          }
+          else {
         const response = {
             statusCode: 500,
             headers: headers,
@@ -50,19 +107,55 @@ export function main(event, context, callback) {
           console.error(`Error, invalid passphrase hash submitted by client: `, clientHash);
           callback(null, response);
         }
+      });
+    }
     else {
-        const cipher = data.Item.cipher;
-          const response = {
-              statusCode: 200,
+        const retrievedAt = Date.now();
+        const retrieved = true;
+        // Delete cipher, hash and hint, set retrieved = true and retrievedAt
+        const p = {
+          TableName: process.env.tableName,
+          // 'Key' defines the key of the item to be retrieved
+          Key: {
+            id: id
+          },
+          Item: {
+            id: id,
+            cipher: "DELETED",
+            createdAt: createdAt,
+            expiresAt: expiresAt,
+            retrievedAt: retrievedAt,
+            retrieved: retrieved,
+            hash: "DELETED",
+            attachment: attachment,
+            hint: "DELETED"
+            }
+        };
+
+        dynamoDb.put(p, function(err, data) {
+          if (err) {
+            const response = {
+              statusCode: 500,
               headers: headers,
-              body: JSON.stringify({
-                  status: true,
-                  cipher: cipher,
-                  message:  "Cipher has been retrieved"
-                  })
-              };
-          // We must delete the secret before returning the response to the client
-          callback(null, response);
+              body: JSON.stringify({ status: false, message: "Error, and error occurred when deleting cipher and hash" })
+            };
+            console.error(`Error, failed to delete cipher and  hash: `, err);
+            callback(null, response);
+
+          }
+          else {
+            const response = {
+                statusCode: 200,
+                headers: headers,
+                body: JSON.stringify({
+                    status: true,
+                    cipher: cipher,
+                    message:  "Cipher retrieved successfully, cipher and hash have been deleted"
+                    })
+                };
+            callback(null, response);
+              }
+        });
     }
   });
 }

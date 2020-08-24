@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 19);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -1290,182 +1290,9 @@ module.exports = require("aws-sdk");
 
 /***/ }),
 /* 5 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "main", function() { return main; });
-/* harmony import */ var source_map_support_register__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
-/* harmony import */ var source_map_support_register__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(source_map_support_register__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var aws_sdk__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
-/* harmony import */ var aws_sdk__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(aws_sdk__WEBPACK_IMPORTED_MODULE_1__);
-
-
-const dynamoDb = new aws_sdk__WEBPACK_IMPORTED_MODULE_1___default.a.DynamoDB.DocumentClient();
-function main(event, context, callback) {
-  // Request body is passed in as a JSON encoded string in 'event.body'
-  const data = JSON.parse(event.body); // secretID submitted as path query id=
-
-  const id = data.id; // hash submitted by  client
-
-  const clientHash = data.hash;
-  const params = {
-    TableName: process.env.tableName,
-    // 'Key' defines the key of the item to be retrieved
-    Key: {
-      id: id
-    }
-  };
-  dynamoDb.get(params, (error, data) => {
-    // Set response headers to enable CORS (Cross-Origin Resource Sharing)
-    const headers = {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Credentials": true
-    }; // Return status code 500 on error
-
-    if (error) {
-      const response = {
-        statusCode: 500,
-        headers: headers,
-        body: JSON.stringify({
-          status: false,
-          message: "Error retrieving cipher, your secret may have expired."
-        })
-      };
-      console.error(`Error retrieving item from DB: \n`, error);
-      callback(null, response);
-      return;
-    }
-
-    const cipher = data.Item.cipher;
-    const createdAt = data.Item.createdAt;
-    const expiresAt = data.Item.expiresAt;
-    const attachment = data.Item.attachment;
-    const hash = data.Item.hash;
-    const hint = data.Item.hint;
-    const failedRetrievals = data.Item.failedRetrievals;
-    let incrementFailedRetrievals = 1;
-
-    if (failedRetrievals) {
-      incrementFailedRetrievals = failedRetrievals + 1;
-    }
-
-    console.log(`failedRetrievals: ${failedRetrievals}`);
-    console.log(`failedRetrievals type: ${typeof failedRetrievals}`);
-    console.log(`incrementFailedRetrievals: ${incrementFailedRetrievals}`);
-    console.log(`incrementFailedRetrievals type: ${typeof incrementFailedRetrievals}`);
-    console.log(`storedHash: ${hash}`);
-    console.log(`clientHash: ${clientHash}`);
-    console.log(`id: ${id}`);
-    const now = Date.now(); // todo if retrieved is true return an error
-    // todo if expired return an error
-
-    if (now > expiresAt) {
-      const response = {
-        statusCode: 500,
-        headers: headers,
-        body: JSON.stringify({
-          status: false,
-          message: "Error, secret has expired"
-        })
-      };
-      console.error(`Error, secret has expired: `, id);
-      callback(null, response);
-    } // todo if failed retrieval attempts >2 and lastFailedRetrievalAt is less than 1 hour ago return an error
-    // if passphrase hashes don't match return an error
-
-
-    if (hash !== clientHash) {
-      // Increment failedRetrievaals counter, update lastFailedRetrievalAt data and send error to client
-      console.log(typeof incrementfailedRetrievals);
-      console.log(typeof now);
-      console.log(typeof id);
-      const x = {
-        TableName: process.env.tableName,
-        // 'Key' defines the key of the item to be retrieved
-        Key: {
-          id: id
-        },
-        Item: {
-          id: id,
-          cipher: cipher,
-          hint: hint,
-          hash: hash,
-          attachment: attachment,
-          createdAt: createdAt,
-          expiresAt: expiresAt,
-          retrievedAt: 0,
-          retrieved: false,
-          failedRetrievals: incrementFailedRetrievals,
-          lastFailedRetrievalAt: now
-        }
-      };
-      dynamoDb.put(x, function (err, data) {
-        if (err) {
-          console.error(`Error, failed to update Item: `, err);
-        } else {
-          const response = {
-            statusCode: 500,
-            headers: headers,
-            body: JSON.stringify({
-              status: false,
-              message: "Error, passphrase hash not accepted"
-            })
-          };
-          console.error(`Error, invalid passphrase hash submitted by client: `, clientHash);
-          callback(null, response);
-        }
-      });
-    } else {
-      const retrievedAt = Date.now();
-      const retrieved = true; // Delete cipher, hash and hint, set retrieved = true and retrievedAt
-
-      const p = {
-        TableName: process.env.tableName,
-        // 'Key' defines the key of the item to be retrieved
-        Key: {
-          id: id
-        },
-        Item: {
-          id: id,
-          cipher: "DELETED",
-          createdAt: createdAt,
-          expiresAt: expiresAt,
-          retrievedAt: retrievedAt,
-          retrieved: retrieved,
-          hash: "DELETED",
-          attachment: attachment,
-          hint: "DELETED"
-        }
-      };
-      dynamoDb.put(p, function (err, data) {
-        if (err) {
-          const response = {
-            statusCode: 500,
-            headers: headers,
-            body: JSON.stringify({
-              status: false,
-              message: "Error, and error occurred when deleting cipher and hash"
-            })
-          };
-          console.error(`Error, failed to delete cipher and  hash: `, err);
-          callback(null, response);
-        } else {
-          const response = {
-            statusCode: 200,
-            headers: headers,
-            body: JSON.stringify({
-              status: true,
-              cipher: cipher,
-              message: "Cipher retrieved successfully, cipher and hash have been deleted"
-            })
-          };
-          callback(null, response);
-        }
-      });
-    }
-  });
-}
+module.exports = require("crypto");
 
 /***/ }),
 /* 6 */
@@ -4179,6 +4006,175 @@ function bufferFrom (value, encodingOrOffset, length) {
 module.exports = bufferFrom
 
 
+/***/ }),
+/* 19 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+// ESM COMPAT FLAG
+__webpack_require__.r(__webpack_exports__);
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, "main", function() { return /* binding */ main; });
+
+// EXTERNAL MODULE: /Users/cfinnegan/Documents/dev/secretshare/node_modules/source-map-support/register.js
+var register = __webpack_require__(6);
+
+// EXTERNAL MODULE: external "crypto"
+var external_crypto_ = __webpack_require__(5);
+var external_crypto_default = /*#__PURE__*/__webpack_require__.n(external_crypto_);
+
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secretshare/node_modules/uuid/dist/esm-node/rng.js
+
+function rng() {
+  return external_crypto_default.a.randomBytes(16);
+}
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secretshare/node_modules/uuid/dist/esm-node/bytesToUuid.js
+/**
+ * Convert array of 16 byte values to UUID string format of the form:
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ */
+var byteToHex = [];
+
+for (var bytesToUuid_i = 0; bytesToUuid_i < 256; ++bytesToUuid_i) {
+  byteToHex[bytesToUuid_i] = (bytesToUuid_i + 0x100).toString(16).substr(1);
+}
+
+function bytesToUuid(buf, offset) {
+  var i = offset || 0;
+  var bth = byteToHex; // join used to fix memory issue caused by concatenation: https://bugs.chromium.org/p/v8/issues/detail?id=3175#c4
+
+  return [bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]]].join('');
+}
+
+/* harmony default export */ var esm_node_bytesToUuid = (bytesToUuid);
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secretshare/node_modules/uuid/dist/esm-node/v4.js
+
+
+
+function v4(options, buf, offset) {
+  var i = buf && offset || 0;
+
+  if (typeof options == 'string') {
+    buf = options === 'binary' ? new Array(16) : null;
+    options = null;
+  }
+
+  options = options || {};
+  var rnds = options.random || (options.rng || rng)(); // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+
+  rnds[6] = rnds[6] & 0x0f | 0x40;
+  rnds[8] = rnds[8] & 0x3f | 0x80; // Copy bytes to buffer, if provided
+
+  if (buf) {
+    for (var ii = 0; ii < 16; ++ii) {
+      buf[i + ii] = rnds[ii];
+    }
+  }
+
+  return buf || esm_node_bytesToUuid(rnds);
+}
+
+/* harmony default export */ var esm_node_v4 = (v4);
+// EXTERNAL MODULE: external "aws-sdk"
+var external_aws_sdk_ = __webpack_require__(4);
+var external_aws_sdk_default = /*#__PURE__*/__webpack_require__.n(external_aws_sdk_);
+
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secretshare/create.js
+
+
+
+const dynamoDb = new external_aws_sdk_default.a.DynamoDB.DocumentClient();
+const id = esm_node_v4();
+function main(event, context, callback) {
+  // URL for web form to retrieve secret
+  // const getSecretURL = process.env.GETSECRET_URL;
+  // Request body is passed in as a JSON encoded string in 'event.body'
+  const data = JSON.parse(event.body);
+  const cipher = data.cipher;
+  const hint = data.hint;
+  const hash = data.hash;
+  const createdAt = Date.now(); // Validate expiry in hours and force maximum permitted expiry to 72hrs
+  // A scheduled lambda function will delete expired ciphers
+
+  function validateExpiresAt(hours) {
+    if (hours <= 72 && hours.isInteger) {
+      let expiresAt = Date.now() + hours * 60 * 60 * 1000;
+      return expiresAt;
+    } else {
+      let expiresAt = Date.now() + 72 * 60 * 60 * 1000;
+      return expiresAt;
+    }
+  }
+
+  const expiresAt = validateExpiresAt(data.expiresAt); // Create a DynamoDB item
+  // - 'id': a unique uuid
+  // - 'cipher' contains the cipher of the secret encrypted with a passphrase
+  // - 'hash' hash of passphrase
+  // - 'hint' optional hint for the passphrase
+  // - 'expiresAt' date/time to delete the item
+  // - 'content': parsed from request body, not yet implemented
+  // - 'attachment': parsed from request body, not yet implemented
+  // - 'createdAt': current Unix timestamp
+
+  const dynamoDBparams = {
+    TableName: process.env.tableName,
+    Item: {
+      id: id,
+      cipher: cipher,
+      hint: hint,
+      hash: hash,
+      attachment: data.attachment,
+      createdAt: createdAt,
+      expiresAt: expiresAt,
+      retrievedAt: 0,
+      retrieved: false,
+      failedRetrievals: 0,
+      lastFailedRetrievalAt: 0
+    }
+  }; // debugging
+
+  console.log(`id:  ${id}`);
+  console.log(`cipher:  ${cipher}`);
+  console.log(`hint:  ${hint}`);
+  console.log(`hash:  ${hash}`);
+  console.log(`createdAt:  ${createdAt}`);
+  console.log(`expiresAt:  ${expiresAt}`);
+  dynamoDb.put(dynamoDBparams, (error, data) => {
+    // Set response headers to enable CORS (Cross-Origin Resource Sharing)
+    const headers = {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Credentials": true
+    }; // Return status code 500 on error
+
+    if (error) {
+      const response = {
+        statusCode: 500,
+        headers: headers,
+        body: JSON.stringify({
+          status: false,
+          message: "Sorry that didn't work, please try again."
+        })
+      };
+      console.error(`Error creating DynamoDB Item: \n`, error);
+      callback(null, response);
+      return;
+    } // Return status code 200 and the URL and token for the newly created secret
+
+
+    const response = {
+      statusCode: 200,
+      headers: headers,
+      body: JSON.stringify({
+        status: true,
+        id: id,
+        message: "Secret encrypted and stored successfully."
+      })
+    };
+    callback(null, response);
+  });
+}
+
 /***/ })
 /******/ ])));
-//# sourceMappingURL=get.js.map
+//# sourceMappingURL=create.js.map
