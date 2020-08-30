@@ -2,6 +2,7 @@ import AWS from "aws-sdk";
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 export function main(event, context, callback) {
+
   // Request body is passed in as a JSON encoded string in 'event.body'
   const data = JSON.parse(event.body);
   // secretID submitted as path query id=
@@ -26,7 +27,7 @@ export function main(event, context, callback) {
     // Return status code 500 on error
     if (error) {
       const response = {
-        statusCode: 500,
+        statusCode: 202,
         headers: headers,
         body: JSON.stringify({ status: false, message: "We are unable to retrieve this secret." })
       };
@@ -35,10 +36,11 @@ export function main(event, context, callback) {
       return;
     }
     // Return error if Item has expired
+    const now = Date.now();
     const expiresAt = data.Item.expiresAt;
     if (now > expiresAt) {
       const response = {
-          statusCode: 500,
+          statusCode: 202,
           headers: headers,
           body: JSON.stringify({ status: false, message: "This secret has expired." })
         };
@@ -49,7 +51,7 @@ export function main(event, context, callback) {
     // Return error if Item has already been retrieved
     if (data.Item.retrieved) {
       const response = {
-          statusCode: 500,
+          statusCode: 202,
           headers: headers,
           body: JSON.stringify({ status: false, message: "This secret has already been retrieved." })
         };
@@ -68,7 +70,6 @@ export function main(event, context, callback) {
     console.log(`storedHash: ${hash}`);
     console.log(`clientHash: ${clientHash}`);
     console.log(`id: ${id}`);
-    const now = Date.now();
     // todo if retrieved is true return an error
     // message: Error, this secret has already been retrieved
     // todo if expired return an error
@@ -80,7 +81,7 @@ export function main(event, context, callback) {
         if (failedRetrievals) {
           incrementFailedRetrievals = failedRetrievals + 1;
         }
-
+        const now = Date.now();
         console.log(typeof(incrementfailedRetrievals));
         console.log(typeof(now));
         console.log(typeof(id));
@@ -111,9 +112,9 @@ export function main(event, context, callback) {
           }
           else {
         const response = {
-            statusCode: 500,
+            statusCode: 202,
             headers: headers,
-            body: JSON.stringify({ status: false, message: "Error, passphrase hash not accepted" })
+            body: JSON.stringify({ status: false, message: "Passphrase not accepted" })
           };
           console.error(`Error, invalid passphrase hash submitted by client: `, clientHash);
           callback(null, response);
@@ -146,9 +147,9 @@ export function main(event, context, callback) {
         dynamoDb.put(p, function(err, data) {
           if (err) {
             const response = {
-              statusCode: 500,
+              statusCode: 202,
               headers: headers,
-              body: JSON.stringify({ status: false, message: "Error, and error occurred when deleting cipher and hash" })
+              body: JSON.stringify({ status: false, message: "An internal error occurred" })
             };
             console.error(`Error, failed to delete cipher and  hash: `, err);
             callback(null, response);
@@ -161,7 +162,7 @@ export function main(event, context, callback) {
                 body: JSON.stringify({
                     status: true,
                     cipher: cipher,
-                    message:  "Cipher retrieved successfully, cipher and hash have been deleted"
+                    message:  "Secret retrieved successfully, encrypted data have been permanently deleted from our servers"
                     })
                 };
             callback(null, response);
