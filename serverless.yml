@@ -23,7 +23,7 @@ custom:
 provider:
   name: aws
   # development only, use --aws-profile profilename instead
-  profile: ct-prod-serverless
+  profile: cscdev-admin
   runtime: nodejs12.x
   stage: dev
   # development only

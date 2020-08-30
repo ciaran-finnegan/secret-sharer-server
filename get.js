@@ -28,48 +28,59 @@ export function main(event, context, callback) {
       const response = {
         statusCode: 500,
         headers: headers,
-        body: JSON.stringify({ status: false, message: "Error retrieving cipher, your secret may have expired." })
+        body: JSON.stringify({ status: false, message: "We are unable to retrieve this secret." })
       };
       console.error(`Error retrieving item from DB: \n`,error);
       callback(null, response);
       return;
     }
+    // Return error if Item has expired
+    const expiresAt = data.Item.expiresAt;
+    if (now > expiresAt) {
+      const response = {
+          statusCode: 500,
+          headers: headers,
+          body: JSON.stringify({ status: false, message: "This secret has expired." })
+        };
+        console.error(`Error, secret has expired: `, id);
+        callback(null, response);
+      }
+
+    // Return error if Item has already been retrieved
+    if (data.Item.retrieved) {
+      const response = {
+          statusCode: 500,
+          headers: headers,
+          body: JSON.stringify({ status: false, message: "This secret has already been retrieved." })
+        };
+        console.error(`Error, secret has expired: `, id);
+        callback(null, response);
+      }
     const cipher = data.Item.cipher;
     const createdAt = data.Item.createdAt;
-    const expiresAt = data.Item.expiresAt;
     const attachment = data.Item.attachment;
     const hash = data.Item.hash;
     const hint = data.Item.hint;
     const failedRetrievals = data.Item.failedRetrievals;
-    let incrementFailedRetrievals = 1;
-    if (failedRetrievals) {
-      incrementFailedRetrievals = failedRetrievals + 1;
-    }
 
     console.log(`failedRetrievals: ${failedRetrievals}`);
     console.log(`failedRetrievals type: ${typeof(failedRetrievals)}`);
-    console.log(`incrementFailedRetrievals: ${incrementFailedRetrievals}`);
-    console.log(`incrementFailedRetrievals type: ${typeof(incrementFailedRetrievals)}`);
-
     console.log(`storedHash: ${hash}`);
     console.log(`clientHash: ${clientHash}`);
     console.log(`id: ${id}`);
     const now = Date.now();
     // todo if retrieved is true return an error
+    // message: Error, this secret has already been retrieved
     // todo if expired return an error
-    if (now > expiresAt) {
-      const response = {
-          statusCode: 500,
-          headers: headers,
-          body: JSON.stringify({ status: false, message: "Error, secret has expired" })
-        };
-        console.error(`Error, secret has expired: `, id);
-        callback(null, response);
-      }
     // todo if failed retrieval attempts >2 and lastFailedRetrievalAt is less than 1 hour ago return an error
     // if passphrase hashes don't match return an error
     if (hash !== clientHash) {
         // Increment failedRetrievaals counter, update lastFailedRetrievalAt data and send error to client
+        let incrementFailedRetrievals = 1;
+        if (failedRetrievals) {
+          incrementFailedRetrievals = failedRetrievals + 1;
+        }
+
         console.log(typeof(incrementfailedRetrievals));
         console.log(typeof(now));
         console.log(typeof(id));

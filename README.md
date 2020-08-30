@@ -35,5 +35,17 @@ The following command can be used to update the entire applicaton stack (takes l
 ## Debugging
 serverless logs -f getSecret --aws-profile --aws-profile AWS_PROFILE e.g. cscdev-AWSAdmin --tail
 
+### Error messaages
+
+StatusCode = 500
+-   message: "We are unable to retrieve this secret."
+-   message: "This secret has expired."
+-   message: "This secret has already been retrieved."
+-   message: "The passphrase you provided was not accepted.
+-   message: "An internal error occurred"
+
+StatusCode = 200
+-   "Your secret has been retrieved, we have deleted the encrypted data from our servers"
+
 
 
