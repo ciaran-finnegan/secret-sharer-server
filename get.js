@@ -19,33 +19,52 @@ export function main(event, context, callback) {
 
   dynamoDb.get(params, (error, data) => {
     // Set response headers to enable CORS (Cross-Origin Resource Sharing)
+    console.log(`debug: error: ${error}`);
+    console.log(`debug: data.Item: ${data.Item}`);
+
     const headers = {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Credentials": true
     };
 
-    // Return status code 500 on error
     if (error) {
       const response = {
         statusCode: 202,
         headers: headers,
         body: JSON.stringify({ status: false, message: "We are unable to retrieve this secret." })
       };
-      console.error(`Error retrieving item from DB: \n`,error);
+      console.error(`Error (if error) retrieving item from DB: \n`,error);
       callback(null, response);
       return;
     }
     // Return error if Item has expired
-    const now = Date.now();
-    const expiresAt = data.Item.expiresAt;
-    if (now > expiresAt) {
+//    console.log(`debug: error: ${error}`);
+//    console.log(`debug: data: ${error}`);
+// If a nonexistent id is provided data and error are returned as null
+// Needs further investigation
+// Refactor using async/await/try/catch to handle errors properly
+    else if (!data.Item.id) {
       const response = {
-          statusCode: 202,
-          headers: headers,
-          body: JSON.stringify({ status: false, message: "This secret has expired." })
-        };
-        console.error(`Error, secret has expired: `, id);
-        callback(null, response);
+        statusCode: 202,
+        headers: headers,
+        body: JSON.stringify({ status: false, message: "We are unable to retrieve this secret." })
+      };
+      console.error(`Error retrieving item (id) from DB: \n`,id);
+      callback(null, response);
+      return;
+    }
+    else {
+      const now = Date.now();
+      const expiresAt = data.Item.expiresAt;
+      if (now > expiresAt) {
+        const response = {
+            statusCode: 202,
+            headers: headers,
+            body: JSON.stringify({ status: false, message: "This secret has expired." })
+          };
+          console.error(`Error, secret has expired: `, id);
+          callback(null, response);
+        }
       }
 
     // Return error if Item has already been retrieved
@@ -58,6 +77,7 @@ export function main(event, context, callback) {
         console.error(`Error, secret has expired: `, id);
         callback(null, response);
       }
+
     const cipher = data.Item.cipher;
     const createdAt = data.Item.createdAt;
     const attachment = data.Item.attachment;
@@ -85,7 +105,7 @@ export function main(event, context, callback) {
         console.log(typeof(incrementfailedRetrievals));
         console.log(typeof(now));
         console.log(typeof(id));
-
+        const expiresAt = data.Item.expiresAt;
         const x = {
           TableName: process.env.tableName,
           // 'Key' defines the key of the item to be retrieved
@@ -124,6 +144,7 @@ export function main(event, context, callback) {
     else {
         const retrievedAt = Date.now();
         const retrieved = true;
+        const expiresAt = data.Item.expiresAt;
         // Delete cipher, hash and hint, set retrieved = true and retrievedAt
         const p = {
           TableName: process.env.tableName,
