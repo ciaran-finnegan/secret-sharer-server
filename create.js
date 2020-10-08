@@ -2,9 +2,10 @@ import * as uuid from "uuid";
 import AWS from "aws-sdk";
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
-const id = uuid.v4();
+
 
 export function main(event, context, callback) {
+  const id = uuid.v4();
   // URL for web form to retrieve secret
   // const getSecretURL = process.env.GETSECRET_URL;
   // Request body is passed in as a JSON encoded string in 'event.body'
