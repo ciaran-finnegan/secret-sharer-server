@@ -142,7 +142,7 @@ const main = Object(_libs_handler_lib__WEBPACK_IMPORTED_MODULE_2__["default"])(a
     };
   } catch (e) {
     return {
-      status: 400,
+      status: false,
       error: {
         message: e.message
       }
