@@ -1,0 +1,8 @@
+{
+    "body": "{\"subscriptionName\":\"Business\"}",
+    "requestContext": {
+      "identity": {
+        "cognitoIdentityId": "USER-SUB-1234"
+      }
+    }
+  }

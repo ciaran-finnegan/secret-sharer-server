@@ -39,6 +39,9 @@ provider:
     environment:  dev
     GETSECRET_URL: https://secret-sharer-client.s3-ap-southeast-2.amazonaws.com/getsecret.html?id=
     stripeSecretKey: ${env:STRIPE_SECRET_KEY}
+    businessSubscriptionPriceId: ${env:STRIPE_BUSINESS_SUBSCRIPTION_PRICE_ID}
+    enterpriseSubscriptionPriceId: ${env:STRIPE_ENTERPRISE_SUBSCRIPTION_PRICE_ID}
+    domainURL: ${env:DOMAIN_URL}
     
   iamRoleStatements:
     - Effect: "Allow"
@@ -99,6 +102,19 @@ functions:
           method: post
           cors: true
           authorizer: aws_iam
+
+  create-checkout-session:
+    # Defines an HTTP API endpoint that calls the main function in create-checkout-session.js
+    # - path: url path is /create-checkout-session
+    # - method: POST request
+    handler: create-checkout-session.main
+    events:
+      - http:
+          path: create-checkout-session
+          method: post
+          cors: true
+          authorizer: aws_iam
+
 # Create our resources with separate CloudFormation templates
 resources:
   # API Gateway Errors

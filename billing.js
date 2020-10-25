@@ -23,3 +23,22 @@ export const main = handler(async (event, context) => {
   });
   return { status: true };
 });
+
+app.post('/create-checkout-session', async (req, res) => {
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    line_items: [
+      {
+        // Replace `price_...` with the actual price ID for your subscription
+        // you created in step 2 of this guide.
+        price: 'price_...',
+        quantity: 1,
+      },
+    ],
+    mode: 'subscription',
+    success_url: 'https://example.com/success',
+    cancel_url: 'https://example.com/cancel',
+  });
+
+  res.json({ id: session.id });
+});

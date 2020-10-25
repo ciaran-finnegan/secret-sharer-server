@@ -81,15 +81,15 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "../../../billing.js");
+/******/ 	return __webpack_require__(__webpack_require__.s = "../../../create-checkout-session.js");
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "../../../billing.js":
-/*!**********************************************************************!*\
-  !*** /Users/cfinnegan/Documents/dev/secret-sharer-server/billing.js ***!
-  \**********************************************************************/
+/***/ "../../../create-checkout-session.js":
+/*!**************************************************************************************!*\
+  !*** /Users/cfinnegan/Documents/dev/secret-sharer-server/create-checkout-session.js ***!
+  \**************************************************************************************/
 /*! exports provided: main */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -108,27 +108,46 @@ __webpack_require__.r(__webpack_exports__);
 
 const main = Object(_libs_handler_lib__WEBPACK_IMPORTED_MODULE_2__["default"])(async (event, context) => {
   const {
-    subscriptionId,
-    source
+    subscriptionName
   } = JSON.parse(event.body);
-  console.log(`subscriptionId: ${subscriptionId}`);
-  const sub = Object(_libs_billing_lib__WEBPACK_IMPORTED_MODULE_3__["calculateCost"])(subscriptionId);
-  console.log(`sub: ${sub}`);
-  console.log(`amount: ${sub.amount}`);
-  console.log(`description: ${sub.description}`);
-  let amount = sub.amount;
-  let description = sub.description; // Load our secret key from the  environment variables
+  const domainURL = process.env.domainURL;
+  const priceId = Object(_libs_billing_lib__WEBPACK_IMPORTED_MODULE_3__["getPriceId"])(subscriptionName);
+  console.log(`subscriptionName: ${subscriptionName}`);
+  console.log(`priceId: ${priceId}`);
+  console.log(`domainURL: ${domainURL}`); // Create new Checkout Session for the order
+  // Other optional params include:
+  // [billing_address_collection] - to display billing address details on the page
+  // [customer] - if you have an existing Stripe Customer ID
+  // [customer_email] - lets you prefill the email input in the form
+  // For full details see https://stripe.com/docs/api/checkout/sessions/create
+  // Load our secret key from the  environment variables
 
   const stripe = stripe__WEBPACK_IMPORTED_MODULE_1___default()(process.env.stripeSecretKey);
-  await stripe.charges.create({
-    source,
-    amount,
-    description,
-    currency: "usd"
-  });
-  return {
-    status: true
-  };
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: "subscription",
+      payment_method_types: ["card"],
+      line_items: [{
+        price: priceId,
+        quantity: 1
+      }],
+      // ?session_id={CHECKOUT_SESSION_ID} means the redirect will have the session ID set as a query param
+      success_url: `${domainURL}/success.html?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${domainURL}/canceled.html`
+    });
+    return {
+      status: true,
+      sessionId: session.id
+    };
+  } catch (e) {
+    return {
+      status: 400,
+      error: {
+        message: e.message
+      }
+    };
+  }
 });
 
 /***/ }),
@@ -137,26 +156,39 @@ const main = Object(_libs_handler_lib__WEBPACK_IMPORTED_MODULE_2__["default"])(a
 /*!*******************************************************************************!*\
   !*** /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/billing-lib.js ***!
   \*******************************************************************************/
-/*! exports provided: calculateCost */
+/*! exports provided: getPriceId, calculateCost */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPriceId", function() { return getPriceId; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateCost", function() { return calculateCost; });
 /* harmony import */ var source_map_support_register__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! source-map-support/register */ "../../source-map-support/register.js");
 /* harmony import */ var source_map_support_register__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(source_map_support_register__WEBPACK_IMPORTED_MODULE_0__);
 
+function getPriceId(subscriptionName) {
+  // Allows changes to Stripe Products without changing client
+  // Move these to Env Variables or a table
+  const businessSubscriptionPriceId = process.env.businessSubscriptionPriceId;
+  const enterpriseSubscriptionPriceId = process.env.enterpriseSubscriptionPriceId;
+
+  if (subscriptionName === "Business") {
+    return businessSubscriptionPriceId;
+  }
+
+  if (subscriptionName === "Enterprise") {
+    return enterpriseSubscriptionPriceId;
+  } // Add Error Handling  here
+
+}
 function calculateCost(subscriptionId) {
   // Move these to Env Variables
   const businessSubscriptionMonthlyRate = 49.00;
   const businessSubscriptionDescription = "Business";
   const enterpriseSubscriptionMonthlyRate = 149.99;
   const enterpriseSubscriptionDescription = "Enterprise";
-  console.log(`subscriptionId: ${subscriptionId}`);
 
   if (subscriptionId === "1") {
-    console.log(`businessSubscriptionMonthlyRate: ${businessSubscriptionMonthlyRate}`);
-    console.log(`businessSubscriptionDescription: ${businessSubscriptionDescription}`);
     let sub = {
       "amount": businessSubscriptionMonthlyRate,
       "description": businessSubscriptionDescription
@@ -165,8 +197,6 @@ function calculateCost(subscriptionId) {
   }
 
   if (subscriptionId === "2") {
-    console.log(`enterpriseSubscriptionMonthlyRate: ${enterpriseSubscriptionMonthlyRate}`);
-    console.log(`enterpriseSubscriptionDescription: ${enterpriseSubscriptionDescription}`);
     let sub = {
       "amount": enterpriseSubscriptionMonthlyRate,
       "description": enterpriseSubscriptionDescription
@@ -9791,4 +9821,4 @@ module.exports = require("util");
 /***/ })
 
 /******/ })));
-//# sourceMappingURL=billing.js.map
+//# sourceMappingURL=create-checkout-session.js.map

@@ -1,3 +1,20 @@
+export function getPriceId(subscriptionName) {
+
+  // Allows changes to Stripe Products without changing client
+  // Move these to Env Variables or a table
+  const businessSubscriptionPriceId  = process.env.businessSubscriptionPriceId;
+  const enterpriseSubscriptionPriceId = process.env.enterpriseSubscriptionPriceId;
+
+  if (subscriptionName === "Business") {
+    return businessSubscriptionPriceId;
+  }
+  if (subscriptionName === "Enterprise") {
+    return enterpriseSubscriptionPriceId;
+  }
+
+  // Add Error Handling  here
+}
+
 export function calculateCost(subscriptionId) {
 
   // Move these to Env Variables
@@ -23,3 +40,4 @@ export function calculateCost(subscriptionId) {
   }
   // Add Error Handling  here
 }
+
