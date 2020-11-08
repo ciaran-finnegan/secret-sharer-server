@@ -36,7 +36,7 @@ provider:
   # These environment variables are made available to our functions
   # under process.env.
   environment:
-    tableName: ${self:custom.tableName}
+    tableName: ${self:custom.ciphersTableName}
     environment:  dev
     GETSECRET_URL: https://secret-sharer-client.s3-ap-southeast-2.amazonaws.com/getsecret.html?id=
     stripeSecretKey: ${env:STRIPE_SECRET_KEY}
