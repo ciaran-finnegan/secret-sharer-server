@@ -1,6 +1,6 @@
 import stripePackage from "stripe";
 import handler from "./libs/handler-lib";
-import { calculateCost } from "./libs/billing-lib";
+import { getPriceId } from "./libs/billing-lib";
 
 export const main = handler(async (event, context) => {
   const { subscriptionName, source } = JSON.parse(event.body);
