@@ -115,6 +115,17 @@ functions:
           method: post
           cors: true
           authorizer: aws_iam
+  heckout-session:
+    # Defines an HTTP API endpoint that calls the main function in checkout-session.js
+    # - path: url path is /checkout-session
+    # - method: POST request
+    handler: checkout-session.main
+    events:
+      - http:
+          path: checkout-session
+          method: post
+          cors: true
+          authorizer: aws_iam
 
 # Create our resources with separate CloudFormation templates
 resources:
