@@ -18,8 +18,7 @@ custom:
   # commands. Or fallsback to what we have set in the provider section.
   stage: ${opt:stage, self:provider.stage}
   # Set the table name here so we can use it while testing locally
-  ciphersTableName: ${self:custom.stage}-ciphers
-  customersTableName: ${self:custom.stage}-ciphers
+  TableName: ${self:custom.stage}-ciphers
   
 provider:
   name: aws
