@@ -1,4 +1,3 @@
-org: ciaran
 app: rest-api-app
 service: secret-sharer
 

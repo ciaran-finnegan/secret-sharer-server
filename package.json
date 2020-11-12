@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "amazon-cognito-identity-js": "^4.5.3",
+    "aws-amplify": "^3.3.7",
     "serverless": "^1.77.1",
     "stripe": "^8.115.0",
     "uuid": "^7.0.3"
