@@ -125,6 +125,17 @@ functions:
           method: post
           cors: true
           authorizer: aws_iam
+  stripe-webhook:
+    # Defines an HTTP API endpoint that calls the main function in checkout-session.js
+    # - path: url path is /checkout-session
+    # - method: POST request
+    handler: stripe-webhook.main
+    events:
+      - http:
+          path: stripe-webhook
+          method: post
+          cors: true
+          authorizer: aws_iam
 
 # Create our resources with separate CloudFormation templates
 resources:
