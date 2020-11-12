@@ -114,7 +114,7 @@ functions:
           method: post
           cors: true
           authorizer: aws_iam
-  heckout-session:
+  checkout-session:
     # Defines an HTTP API endpoint that calls the main function in checkout-session.js
     # - path: url path is /checkout-session
     # - method: POST request
