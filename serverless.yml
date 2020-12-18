@@ -130,11 +130,11 @@ functions:
     # - method: POST request
     handler: stripe-webhook.main
     events:
-      - http:
-          path: stripe-webhook
+      - httpApi:
+          path: /webhooks/{service}
           method: post
           cors: true
-          authorizer: aws_iam
+          # private: false
 
 # Create our resources with separate CloudFormation templates
 resources:

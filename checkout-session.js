@@ -1,6 +1,6 @@
 import stripePackage from "stripe";
 import handler from "./libs/handler-lib";
-import Amplify from "./libs/cognito";
+// import Amplify from "./libs/cognito";
 
 export const main = handler(async (event, context) => {
   const { sessionId } = JSON.parse(event.body);
