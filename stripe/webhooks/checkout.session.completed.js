@@ -1,21 +1,17 @@
 import _ from "lodash";
 import stripe from "../index";
+import putItem from "../../libs/dynamodb/putItem";
 
 export default async (webhookData = null) => {
-  if (webhookData.payment_status && webhookData.payment_status === "paid") {
+  try {
     const stripeCustomer = await stripe.customers.retrieve(
       webhookData.customer
     );
-
     const stripeSubscription = await stripe.subscriptions.retrieve(
       webhookData.subscription
     );
 
-    console.log(
-      JSON.stringify({ stripeCustomer, stripeSubscription }, null, 2)
-    );
-
-    const data = {
+    await putItem("dev-users", {
       customer: {
         id: _.get(stripeCustomer, "id", null),
         email: _.get(stripeCustomer, "email", null),
@@ -32,10 +28,10 @@ export default async (webhookData = null) => {
           id: _.get(stripeSubscription, "items.data.0.id", null),
         },
       },
-    };
+    });
 
-    console.log(data);
+    return Promise.resolve();
+  } catch (exception) {
+    console.warn(exception);
   }
-
-  return Promise.resolve();
 };

@@ -93,7 +93,7 @@
 
 const http = __webpack_require__(34);
 const https = __webpack_require__(35);
-const path = __webpack_require__(11);
+const path = __webpack_require__(13);
 
 const utils = __webpack_require__(1);
 const {
@@ -103,7 +103,7 @@ const {
   StripeRateLimitError,
   StripeError,
   StripeAPIError,
-} = __webpack_require__(5);
+} = __webpack_require__(6);
 
 const defaultHttpAgent = new http.Agent({keepAlive: true});
 const defaultHttpsAgent = new https.Agent({keepAlive: true});
@@ -112,7 +112,7 @@ const defaultHttpsAgent = new https.Agent({keepAlive: true});
 StripeResource.extend = utils.protoExtend;
 
 // Expose method-creator & prepared (basic) methods
-StripeResource.method = __webpack_require__(16);
+StripeResource.method = __webpack_require__(17);
 StripeResource.BASIC_METHODS = __webpack_require__(41);
 
 StripeResource.MAX_BUFFERED_REQUEST_METRICS = 100;
@@ -645,9 +645,9 @@ module.exports = StripeResource;
 "use strict";
 
 
-const EventEmitter = __webpack_require__(13).EventEmitter;
+const EventEmitter = __webpack_require__(15).EventEmitter;
 const qs = __webpack_require__(36);
-const crypto = __webpack_require__(15);
+const crypto = __webpack_require__(7);
 
 const hasOwn = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop);
 
@@ -1085,6 +1085,13 @@ function emitWarning(warning) {
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(22).install();
+
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -18241,17 +18248,16 @@ function emitWarning(warning) {
   else {}
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(7)(module)))
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(22).install();
-
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(9)(module)))
 
 /***/ }),
 /* 4 */
+/***/ (function(module, exports) {
+
+module.exports = require("aws-sdk");
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -18745,7 +18751,7 @@ exports.computeSourceURL = computeSourceURL;
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18887,7 +18893,13 @@ module.exports.StripeInvalidGrantError = StripeInvalidGrantError;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
+/***/ (function(module, exports) {
+
+module.exports = require("crypto");
+
+/***/ }),
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19142,7 +19154,7 @@ module.exports = {
 
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -19170,7 +19182,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -19180,9 +19192,9 @@ module.exports = function(module) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var base64VLQ = __webpack_require__(9);
-var util = __webpack_require__(4);
-var ArraySet = __webpack_require__(10).ArraySet;
+var base64VLQ = __webpack_require__(11);
+var util = __webpack_require__(5);
+var ArraySet = __webpack_require__(12).ArraySet;
 var MappingList = __webpack_require__(25).MappingList;
 
 /**
@@ -19601,7 +19613,7 @@ exports.SourceMapGenerator = SourceMapGenerator;
 
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -19747,7 +19759,7 @@ exports.decode = function base64VLQ_decode(aStr, aIndex, aOutParam) {
 
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -19757,7 +19769,7 @@ exports.decode = function base64VLQ_decode(aStr, aIndex, aOutParam) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(4);
+var util = __webpack_require__(5);
 var has = Object.prototype.hasOwnProperty;
 var hasNativeMap = typeof Map !== "undefined";
 
@@ -19874,13 +19886,13 @@ exports.ArraySet = ArraySet;
 
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = require("path");
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20017,13 +20029,13 @@ module.exports = StripeResource.extend({
 
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = require("events");
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20032,7 +20044,7 @@ module.exports = require("events");
 var replace = String.prototype.replace;
 var percentTwenties = /%20/g;
 
-var util = __webpack_require__(6);
+var util = __webpack_require__(8);
 
 var Format = {
     RFC1738: 'RFC1738',
@@ -20056,20 +20068,14 @@ module.exports = util.assign(
 
 
 /***/ }),
-/* 15 */
-/***/ (function(module, exports) {
-
-module.exports = require("crypto");
-
-/***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 const utils = __webpack_require__(1);
-const makeRequest = __webpack_require__(17);
+const makeRequest = __webpack_require__(18);
 const makeAutoPaginationMethods = __webpack_require__(40)
   .makeAutoPaginationMethods;
 
@@ -20118,7 +20124,7 @@ module.exports = stripeMethod;
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20233,16 +20239,16 @@ module.exports = makeRequest;
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const crypto = __webpack_require__(15);
+const crypto = __webpack_require__(7);
 
 const utils = __webpack_require__(1);
-const {StripeError, StripeSignatureVerificationError} = __webpack_require__(5);
+const {StripeError, StripeSignatureVerificationError} = __webpack_require__(6);
 
 const Webhook = {
   DEFAULT_TOLERANCE: 300, // 5 minutes
@@ -20413,16 +20419,10 @@ module.exports = Webhook;
 
 
 /***/ }),
-/* 19 */
-/***/ (function(module, exports) {
-
-module.exports = require("util");
-
-/***/ }),
 /* 20 */
 /***/ (function(module, exports) {
 
-module.exports = require("aws-sdk");
+module.exports = require("util");
 
 /***/ }),
 /* 21 */
@@ -20471,7 +20471,7 @@ const ALLOWED_CONFIG_PROPERTIES = [
   'appInfo',
 ];
 
-const EventEmitter = __webpack_require__(13).EventEmitter;
+const EventEmitter = __webpack_require__(15).EventEmitter;
 const utils = __webpack_require__(1);
 const {emitWarning} = utils;
 
@@ -20542,8 +20542,8 @@ function Stripe(key, config = {}) {
   this._prepResources();
   this._setApiKey(key);
 
-  this.errors = __webpack_require__(5);
-  this.webhooks = __webpack_require__(18);
+  this.errors = __webpack_require__(6);
+  this.webhooks = __webpack_require__(19);
 
   this._prevRequestMetrics = [];
   this._enableTelemetry = props.telemetry !== false;
@@ -20552,8 +20552,8 @@ function Stripe(key, config = {}) {
   this.StripeResource = Stripe.StripeResource;
 }
 
-Stripe.errors = __webpack_require__(5);
-Stripe.webhooks = __webpack_require__(18);
+Stripe.errors = __webpack_require__(6);
+Stripe.webhooks = __webpack_require__(19);
 
 Stripe.prototype = {
   /**
@@ -20984,7 +20984,7 @@ module.exports.default = Stripe;
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module) {var SourceMapConsumer = __webpack_require__(23).SourceMapConsumer;
-var path = __webpack_require__(11);
+var path = __webpack_require__(13);
 
 var fs;
 try {
@@ -21588,7 +21588,7 @@ exports.resetRetrieveHandlers = function() {
   retrieveFile = handlerExec(retrieveFileHandlers);
 }
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(7)(module)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(9)(module)))
 
 /***/ }),
 /* 23 */
@@ -21599,7 +21599,7 @@ exports.resetRetrieveHandlers = function() {
  * Licensed under the New BSD license. See LICENSE.txt or:
  * http://opensource.org/licenses/BSD-3-Clause
  */
-exports.SourceMapGenerator = __webpack_require__(8).SourceMapGenerator;
+exports.SourceMapGenerator = __webpack_require__(10).SourceMapGenerator;
 exports.SourceMapConsumer = __webpack_require__(26).SourceMapConsumer;
 exports.SourceNode = __webpack_require__(29).SourceNode;
 
@@ -21688,7 +21688,7 @@ exports.decode = function (charCode) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(4);
+var util = __webpack_require__(5);
 
 /**
  * Determine whether mappingB is after mappingA with respect to generated
@@ -21773,10 +21773,10 @@ exports.MappingList = MappingList;
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(4);
+var util = __webpack_require__(5);
 var binarySearch = __webpack_require__(27);
-var ArraySet = __webpack_require__(10).ArraySet;
-var base64VLQ = __webpack_require__(9);
+var ArraySet = __webpack_require__(12).ArraySet;
+var base64VLQ = __webpack_require__(11);
 var quickSort = __webpack_require__(28).quickSort;
 
 function SourceMapConsumer(aSourceMap, aSourceMapURL) {
@@ -23161,8 +23161,8 @@ exports.quickSort = function (ary, comparator) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var SourceMapGenerator = __webpack_require__(8).SourceMapGenerator;
-var util = __webpack_require__(4);
+var SourceMapGenerator = __webpack_require__(10).SourceMapGenerator;
+var util = __webpack_require__(5);
 
 // Matches a Windows-style `\r\n` newline or a `\n` newline used by all other
 // operating systems these days (capturing the result).
@@ -23662,9 +23662,9 @@ module.exports = bufferFrom
 const resourceNamespace = __webpack_require__(33);
 
 module.exports = {
-  Accounts: __webpack_require__(12),
+  Accounts: __webpack_require__(14),
   // Support Accounts for consistency, Account for backwards compatibility
-  Account: __webpack_require__(12),
+  Account: __webpack_require__(14),
   AccountLinks: __webpack_require__(42),
   ApplePayDomains: __webpack_require__(43),
   ApplicationFees: __webpack_require__(44),
@@ -23792,7 +23792,7 @@ module.exports = require("https");
 
 var stringify = __webpack_require__(37);
 var parse = __webpack_require__(38);
-var formats = __webpack_require__(14);
+var formats = __webpack_require__(16);
 
 module.exports = {
     formats: formats,
@@ -23808,8 +23808,8 @@ module.exports = {
 "use strict";
 
 
-var utils = __webpack_require__(6);
-var formats = __webpack_require__(14);
+var utils = __webpack_require__(8);
+var formats = __webpack_require__(16);
 var has = Object.prototype.hasOwnProperty;
 
 var arrayPrefixGenerators = {
@@ -24086,7 +24086,7 @@ module.exports = function (object, opts) {
 "use strict";
 
 
-var utils = __webpack_require__(6);
+var utils = __webpack_require__(8);
 
 var has = Object.prototype.hasOwnProperty;
 var isArray = Array.isArray;
@@ -24356,7 +24356,7 @@ module.exports = require("child_process");
 "use strict";
 
 
-const makeRequest = __webpack_require__(17);
+const makeRequest = __webpack_require__(18);
 const utils = __webpack_require__(1);
 
 function makeAutoPaginationMethods(self, requestArgs, spec, firstPagePromise) {
@@ -24606,7 +24606,7 @@ function wrapAsyncIteratorWithCallback(asyncIteratorNext, onItem) {
 "use strict";
 
 
-const stripeMethod = __webpack_require__(16);
+const stripeMethod = __webpack_require__(17);
 
 module.exports = {
   create: stripeMethod({
@@ -25079,7 +25079,7 @@ module.exports = StripeResource.extend({
 
 
 const utils = __webpack_require__(1);
-const {StripeError} = __webpack_require__(5);
+const {StripeError} = __webpack_require__(6);
 
 class StreamProcessingError extends StripeError {}
 
@@ -26253,18 +26253,18 @@ __webpack_require__.r(__webpack_exports__);
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, "main", function() { return /* binding */ main; });
 
-// EXTERNAL MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/secret-sharer-server/node_modules/source-map-support/register.js
-var register = __webpack_require__(3);
+// EXTERNAL MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/node_modules/source-map-support/register.js
+var register = __webpack_require__(2);
 
 // EXTERNAL MODULE: external "util"
-var external_util_ = __webpack_require__(19);
+var external_util_ = __webpack_require__(20);
 var external_util_default = /*#__PURE__*/__webpack_require__.n(external_util_);
 
 // EXTERNAL MODULE: external "aws-sdk"
-var external_aws_sdk_ = __webpack_require__(20);
+var external_aws_sdk_ = __webpack_require__(4);
 var external_aws_sdk_default = /*#__PURE__*/__webpack_require__.n(external_aws_sdk_);
 
-// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/secret-sharer-server/libs/debug-lib.js
+// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/libs/debug-lib.js
 
 
 
@@ -26295,7 +26295,7 @@ function flush(e) {
   }) => console.debug(date, string));
   console.error(e);
 }
-// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/secret-sharer-server/libs/handler-lib.js
+// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/libs/handler-lib.js
 
 
 function handler(lambda) {
@@ -26328,32 +26328,108 @@ function handler(lambda) {
     };
   };
 }
-// EXTERNAL MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/secret-sharer-server/node_modules/lodash/lodash.js
-var lodash = __webpack_require__(2);
+// EXTERNAL MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/node_modules/lodash/lodash.js
+var lodash = __webpack_require__(3);
 var lodash_default = /*#__PURE__*/__webpack_require__.n(lodash);
 
-// EXTERNAL MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/secret-sharer-server/node_modules/stripe/lib/stripe.js
+// EXTERNAL MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/node_modules/stripe/lib/stripe.js
 var stripe = __webpack_require__(21);
 var stripe_default = /*#__PURE__*/__webpack_require__.n(stripe);
 
-// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/secret-sharer-server/stripe/index.js
+// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/stripe/index.js
 
 
 const stripe_stripe = stripe_default()(process.env.stripeSecretKey);
-/* harmony default export */ var secret_sharer_server_stripe = (stripe_stripe);
-// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/secret-sharer-server/stripe/webhooks/checkout.session.completed.js
+/* harmony default export */ var sss_stripe = (stripe_stripe);
+// EXTERNAL MODULE: external "crypto"
+var external_crypto_ = __webpack_require__(7);
+var external_crypto_default = /*#__PURE__*/__webpack_require__.n(external_crypto_);
+
+// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/node_modules/uuid/dist/esm-node/rng.js
+
+function rng() {
+  return external_crypto_default.a.randomBytes(16);
+}
+// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/node_modules/uuid/dist/esm-node/bytesToUuid.js
+/**
+ * Convert array of 16 byte values to UUID string format of the form:
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ */
+var byteToHex = [];
+
+for (var bytesToUuid_i = 0; bytesToUuid_i < 256; ++bytesToUuid_i) {
+  byteToHex[bytesToUuid_i] = (bytesToUuid_i + 0x100).toString(16).substr(1);
+}
+
+function bytesToUuid(buf, offset) {
+  var i = offset || 0;
+  var bth = byteToHex; // join used to fix memory issue caused by concatenation: https://bugs.chromium.org/p/v8/issues/detail?id=3175#c4
+
+  return [bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]]].join('');
+}
+
+/* harmony default export */ var esm_node_bytesToUuid = (bytesToUuid);
+// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/node_modules/uuid/dist/esm-node/v4.js
+
+
+
+function v4(options, buf, offset) {
+  var i = buf && offset || 0;
+
+  if (typeof options == 'string') {
+    buf = options === 'binary' ? new Array(16) : null;
+    options = null;
+  }
+
+  options = options || {};
+  var rnds = options.random || (options.rng || rng)(); // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+
+  rnds[6] = rnds[6] & 0x0f | 0x40;
+  rnds[8] = rnds[8] & 0x3f | 0x80; // Copy bytes to buffer, if provided
+
+  if (buf) {
+    for (var ii = 0; ii < 16; ++ii) {
+      buf[i + ii] = rnds[ii];
+    }
+  }
+
+  return buf || esm_node_bytesToUuid(rnds);
+}
+
+/* harmony default export */ var esm_node_v4 = (v4);
+// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/libs/dynamodb/index.js
+
+
+const dynamodb = new external_aws_sdk_default.a.DynamoDB();
+/* harmony default export */ var libs_dynamodb = (dynamodb);
+// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/libs/dynamodb/putItem.js
+
+
+
+
+/* harmony default export */ var putItem = ((table = null, data = {}) => {
+  if (Object.keys(data).length === 0 || !table) {
+    throw new Error("Must pass data to put and table to insert.");
+  }
+
+  return libs_dynamodb.putItem({
+    Item: external_aws_sdk_default.a.DynamoDB.Converter.marshall({
+      id: esm_node_v4(),
+      ...data
+    }),
+    TableName: table
+  }).promise();
+});
+// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/stripe/webhooks/checkout.session.completed.js
+
 
 
 
 /* harmony default export */ var checkout_session_completed = (async (webhookData = null) => {
-  if (webhookData.payment_status && webhookData.payment_status === "paid") {
-    const stripeCustomer = await secret_sharer_server_stripe.customers.retrieve(webhookData.customer);
-    const stripeSubscription = await secret_sharer_server_stripe.subscriptions.retrieve(webhookData.subscription);
-    console.log(JSON.stringify({
-      stripeCustomer,
-      stripeSubscription
-    }, null, 2));
-    const data = {
+  try {
+    const stripeCustomer = await sss_stripe.customers.retrieve(webhookData.customer);
+    const stripeSubscription = await sss_stripe.subscriptions.retrieve(webhookData.subscription);
+    await putItem("dev-users", {
       customer: {
         id: lodash_default.a.get(stripeCustomer, "id", null),
         email: lodash_default.a.get(stripeCustomer, "email", null)
@@ -26366,13 +26442,13 @@ const stripe_stripe = stripe_default()(process.env.stripeSecretKey);
           id: lodash_default.a.get(stripeSubscription, "items.data.0.id", null)
         }
       }
-    };
-    console.log(data);
+    });
+    return Promise.resolve();
+  } catch (exception) {
+    console.warn(exception);
   }
-
-  return Promise.resolve();
 });
-// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/secret-sharer-server/stripe-webhook.js
+// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/stripe-webhook.js
 
 
 
