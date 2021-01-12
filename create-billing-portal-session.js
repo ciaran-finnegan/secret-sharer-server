@@ -20,19 +20,12 @@ export const main = handler(async (event, context) => {
   const stripe = stripePackage(process.env.stripeSecretKey);
 
   try {
-    const session = await stripe.checkout.sessions.create({
-      mode: "subscription",
-      payment_method_types: ["card"],
+    // TODO: On the client, get the current user from Cognito and their email (consider putting on state w/ redux).
+    // TODO: In here, based on email (or userId) pull the customer record from dynamo and get stripe customer ID.
+    // NOTE: https://stripe.com/docs/billing/subscriptions/integrating-customer-portal#redirect
+    const session = await stripe.billingPortal.sessions.create({
       customer_email: email,
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      // ?session_id={CHECKOUT_SESSION_ID} means the redirect will have the session ID set as a query param
-      success_url: `${domainURL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${domainURL}/canceled`,
+      return_url: `${domainURL}/settings`,
     });
 
     return {
