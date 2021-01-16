@@ -88,19 +88,6 @@
 /* 0 */
 /***/ (function(module, exports) {
 
-module.exports = require("aws-sdk");
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(7).install();
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports) {
-
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -592,6 +579,19 @@ exports.computeSourceURL = computeSourceURL;
 
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
+module.exports = require("aws-sdk");
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(7).install();
+
+
+/***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -603,7 +603,7 @@ exports.computeSourceURL = computeSourceURL;
  */
 
 var base64VLQ = __webpack_require__(4);
-var util = __webpack_require__(2);
+var util = __webpack_require__(0);
 var ArraySet = __webpack_require__(5).ArraySet;
 var MappingList = __webpack_require__(11).MappingList;
 
@@ -1179,7 +1179,7 @@ exports.decode = function base64VLQ_decode(aStr, aIndex, aOutParam) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(2);
+var util = __webpack_require__(0);
 var has = Object.prototype.hasOwnProperty;
 var hasNativeMap = typeof Map !== "undefined";
 
@@ -2038,7 +2038,7 @@ exports.decode = function (charCode) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(2);
+var util = __webpack_require__(0);
 
 /**
  * Determine whether mappingB is after mappingA with respect to generated
@@ -2123,7 +2123,7 @@ exports.MappingList = MappingList;
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(2);
+var util = __webpack_require__(0);
 var binarySearch = __webpack_require__(13);
 var ArraySet = __webpack_require__(5).ArraySet;
 var base64VLQ = __webpack_require__(4);
@@ -3512,7 +3512,7 @@ exports.quickSort = function (ary, comparator) {
  */
 
 var SourceMapGenerator = __webpack_require__(3).SourceMapGenerator;
-var util = __webpack_require__(2);
+var util = __webpack_require__(0);
 
 // Matches a Windows-style `\r\n` newline or a `\n` newline used by all other
 // operating systems these days (capturing the result).
@@ -4017,18 +4017,18 @@ __webpack_require__.r(__webpack_exports__);
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, "main", function() { return /* binding */ main; });
 
-// EXTERNAL MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/node_modules/source-map-support/register.js
-var register = __webpack_require__(1);
+// EXTERNAL MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/node_modules/source-map-support/register.js
+var register = __webpack_require__(2);
 
 // EXTERNAL MODULE: external "util"
 var external_util_ = __webpack_require__(6);
 var external_util_default = /*#__PURE__*/__webpack_require__.n(external_util_);
 
 // EXTERNAL MODULE: external "aws-sdk"
-var external_aws_sdk_ = __webpack_require__(0);
+var external_aws_sdk_ = __webpack_require__(1);
 var external_aws_sdk_default = /*#__PURE__*/__webpack_require__.n(external_aws_sdk_);
 
-// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/libs/debug-lib.js
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/debug-lib.js
 
 
 
@@ -4059,7 +4059,7 @@ function flush(e) {
   }) => console.debug(date, string));
   console.error(e);
 }
-// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/libs/handler-lib.js
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/handler-lib.js
 
 
 function handler(lambda) {
@@ -4092,42 +4092,65 @@ function handler(lambda) {
     };
   };
 }
-// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/libs/dynamodb/index.js
-
-
-const dynamodb = new external_aws_sdk_default.a.DynamoDB();
-/* harmony default export */ var libs_dynamodb = (dynamodb);
-// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/libs/dynamodb/getItem.js
-
-
-
-/* harmony default export */ var getItem = ((table = null, query = {}) => {
-  if (Object.keys(query).length === 0 || !table) {
-    throw new Error("Must pass query to get and table to get.");
-  }
-
-  return libs_dynamodb.getItem({
-    Key: external_aws_sdk_default.a.DynamoDB.Converter.marshall({ ...query
-    }),
-    TableName: table
-  }).promise();
-});
-// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/create-billing-portal-session.js
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/create-billing-portal-session.js
 
 // import stripePackage from "stripe";
  // import { getPriceId } from "./libs/billing-lib";
+// import getItem from "./libs/dynamodb/getItem";
 
 
 const main = handler(async (event, context) => {
   const {
     email
-  } = JSON.parse(event.body); // const domainURL = redirectURL || process.env.domainURL;
+  } = JSON.parse(event.body);
+  console.log(`email sent from client: ${email}`); // const domainURL = redirectURL || process.env.domainURL;
   // const priceId = getPriceId(subscriptionName);
   // const stripe = stripePackage(process.env.stripeSecretKey);
 
-  const user = await getItem("dev-users", {
-    email
-  });
+  const authProvider = event.requestContext.identity.cognitoAuthenticationProvider; // Cognito authentication provider looks like:
+  // cognito-idp.us-east-1.amazonaws.com/us-east-1_xxxxxxxxx,cognito-idp.us-east-1.amazonaws.com/us-east-1_aaaaaaaaa:CognitoSignIn:qqqqqqqq-1111-2222-3333-rrrrrrrrrrrr
+  // Where us-east-1_aaaaaaaaa is the User Pool id
+  // And qqqqqqqq-1111-2222-3333-rrrrrrrrrrrr is the User Pool User Id
+
+  const parts = authProvider.split(':');
+  const userPoolIdParts = parts[parts.length - 3].split('/');
+  const userPoolId = userPoolIdParts[userPoolIdParts.length - 1];
+  const userPoolUserId = parts[parts.length - 1];
+  console.log(`userPoolId, ${userPoolId}`);
+  console.log(`Cognito userPoolUserId for logged in user on client: ${userPoolUserId}`);
+  const documentClient = new external_aws_sdk_default.a.DynamoDB.DocumentClient(); // attempting to use ScanItem
+
+  const params = {
+    "TableName": "dev-users",
+    "ScanIndexForward": true,
+    "FilterExpression": "#DYNOBASE_email = :email",
+    "ExpressionAttributeNames": {
+      "#DYNOBASE_email": "email"
+    },
+    "ExpressionAttributeValues": {
+      ":email": "gloverful+43@gmail.com"
+    }
+  };
+  const user = await documentClient.scan(params).promise(); // attempting to use QueryItem
+  // const params = {
+  //   "TableName": "dev-users",
+  //   "IndexName": "email-index",
+  //   "KeyConditionExpression": "#DYNOBASE_email = :pkey",
+  //   "ExpressionAttributeValues": {
+  //     ":pkey": "gloverful+41@gmail.com"
+  //   },
+  //   "ExpressionAttributeNames": {
+  //     "#DYNOBASE_email": "email"
+  //   },
+  //   "ScanIndexForward": true
+  // };
+  // const user = await documentClient.query(params).promise();
+
+  console.log(`user: ${user}`); // Can't use GetItem because we don't know the primary key Id
+  // const user = await getItem("dev-users", {
+  //   email,
+  // });
+
   console.log(JSON.stringify(user, null, 2)); // try {
   //   // TODO: On the client, get the current user from Cognito and their email (consider putting on state w/ redux).
   //   // TODO: In here, based on email (or userId) pull the customer record from dynamo and get stripe customer ID.
