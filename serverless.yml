@@ -124,6 +124,17 @@ functions:
           method: post
           cors: true
           authorizer: aws_iam
+  create-billing-portal-session:
+    # Defines an HTTP API endpoint that calls the main function in create-checkout-session.js
+    # - path: url path is /create-checkout-session
+    # - method: POST request
+    handler: create-billing-portal-session.main
+    events:
+      - http:
+          path: create-billing-portal-session
+          method: post
+          cors: true
+          authorizer: aws_iam
   stripe-webhook:
     # Defines an HTTP API endpoint that calls the main function in checkout-session.js
     # - path: url path is /checkout-session

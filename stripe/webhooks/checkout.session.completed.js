@@ -12,10 +12,8 @@ export default async (webhookData = null) => {
     );
 
     await putItem("dev-users", {
-      customer: {
-        id: _.get(stripeCustomer, "id", null),
-        email: _.get(stripeCustomer, "email", null),
-      },
+      email: _.get(stripeCustomer, "email", null),
+      customerId: _.get(stripeCustomer, "id", null),
       subscription: {
         id: _.get(stripeSubscription, "id", null),
         status: _.get(stripeSubscription, "status", null),
