@@ -7,7 +7,7 @@ import AWS from "aws-sdk";
 import getCognitoUser from "./libs/getCongitoUser";
 
 export const main = handler(async (event, context) => {
-  console.log(process.env);
+  //console.log(process.env);
   const { email } = JSON.parse(event.body);
   console.log(`email sent from client: ${email}`);
   // const domainURL = redirectURL || process.env.domainURL;
@@ -31,9 +31,18 @@ export const main = handler(async (event, context) => {
     `Cognito userPoolUsername for logged in user on client: ${userPoolUsername}`
   );
 
-  const cognitoUser = getCognitoUser(userPoolUsername);
-
+  console.log('DEBUG:: Calling getCognitoUser(userPoolUsername)');
+  let cognitoUser = await getCognitoUser(userPoolUsername);
+  //
+  //
+  //
+  // Ask Ryan how to make this fucking thing wait!!!
+  //
+  //
+  //
+  console.log('DEBUG:: getCognitoUser(userPoolUsername) returned');
   console.log(cognitoUser);
+
 
   const documentClient = new AWS.DynamoDB.DocumentClient();
   const user = await documentClient
