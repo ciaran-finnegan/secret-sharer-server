@@ -40,9 +40,9 @@ export const main = handler(async (event, context) => {
   //
   //
   //
-  console.log('DEBUG:: getCognitoUser(userPoolUsername) returned');
-  console.log(cognitoUser);
-
+  console.log('DEBUG:: getCognitoUser(userPoolUsername) returned the user email: ');
+  console.log(cognitoUser.UserAttributes[2].Value);
+  let cognitoUserEmail = cognitoUser.UserAttributes[2].Value;
 
   const documentClient = new AWS.DynamoDB.DocumentClient();
   const user = await documentClient
@@ -54,18 +54,25 @@ export const main = handler(async (event, context) => {
         "#DYNOBASE_email": "email",
       },
       ExpressionAttributeValues: {
-        ":email": "gloverful+43@gmail.com",
+        ":email": cognitoUserEmail,
       },
     })
     .promise();
+//
+//
+// Qury should work, object not getting created in DynamoDB on signup (was working before?)
+//
+//
 
-  console.log(`user: ${JSON.stringify(user, null, 2)}`);
+  // console.log(`user: ${JSON.stringify(user, null, 2)}`);
 
   console.log(JSON.stringify(user, null, 2));
 
   try {
-    // TODO: On the client, get the current user from Cognito and their email (consider putting on state w/ redux).
-    // TODO: In here, based on email (or userId) pull the customer record from dynamo and get stripe customer ID.
+    // DONE: Strip the Cognito User ID from the event sent from the client to the serverless function
+    // DONE: Query Cognito and retrieve the email for that user
+    // (note - safer than accepting an email from the client which could be tampered with, I think - need to think about this)
+    // DONE: In here, based on email, pull the customer record from dynamo and get stripe customer ID.
     // NOTE: https://stripe.com/docs/billing/subscriptions/integrating-customer-portal#redirect
     // const session = await stripe.billingPortal.sessions.create({
     //   customer_email: email,
@@ -77,6 +84,7 @@ export const main = handler(async (event, context) => {
     //   // status: true,
     //   // sessionId: session.id,
     // };
+    // TODO - Call the Stripe billing portal with their customer ID
   } catch (e) {
     return {
       status: false,

@@ -142,21 +142,40 @@ functions:
           method: post
           cors: true
           authorizer: aws_iam
-  stripe-webhook:
-    # Defines an HTTP API endpoint that calls the main function in checkout-session.js
-    # - path: url path is /checkout-session
+  stripe-webhook-OLD:
+    # This is the one Ryan setup, it was working but isn't now, no idea why, replaced with a stanard REST endpoint below
+    # Defines an HTTP API endpoint that calls the main function in stripe-webhook.js
+    # - path: url path is /stripe-webhook
     # - method: POST request
     handler: stripe-webhook.main
     events:
       - httpApi:
+          method: POST
           path: /webhooks/{service}
+          # cors: true
+          # private: false
+  stripe-webhook:
+    # Defines an HTTP API endpoint that calls the main function in stripe-webhook.js
+    # - path: url path is /stripe-webhook
+    # - method: POST request
+    # - this is a public endpoint, stripe signing secret must be validated
+    handler: stripe-webhook.main
+    events:
+      - http:
+          path: stripe-webhook
           method: post
           cors: true
-          # private: false
-
 # Create our resources with separate CloudFormation templates
 resources:
   # API Gateway Errors
   - ${file(resources/api-gateway-errors.yml)}
   # DynamoDB
   - ${file(resources/dynamodb-table.yml)}
+
+# Enable detailed metrics that can be used for monitoring and alerting in Cloudwatch
+httpApi:
+  metrics: true
+
+# Enable access logging for httpAPI
+logs:
+  httpApi: true

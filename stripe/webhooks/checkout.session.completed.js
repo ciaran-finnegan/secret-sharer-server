@@ -4,6 +4,7 @@ import putItem from "../../libs/dynamodb/putItem";
 
 export default async (webhookData = null) => {
   try {
+    console.log('DEBUG:: executing checkout.session.completed.js');
     const stripeCustomer = await stripe.customers.retrieve(
       webhookData.customer
     );
@@ -30,6 +31,7 @@ export default async (webhookData = null) => {
 
     return Promise.resolve();
   } catch (exception) {
+    console.log('DEBUG:: Exception running checkout.session.completed');
     console.warn(exception);
   }
 };

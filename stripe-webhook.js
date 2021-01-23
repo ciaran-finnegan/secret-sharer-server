@@ -5,6 +5,10 @@ const webhooks = {
   "checkout.session.completed": checkoutSessionCompleted,
 };
 
+// TODO
+// Validate Stripe Webhook Signature
+// https://stripe.com/docs/webhooks/signatures#verify-official-libraries
+
 export const main = handler(async (event, context) => {
   const stripeWebhook = event.body ? JSON.parse(event.body) : null;
   const parsedStripeWebhook =
