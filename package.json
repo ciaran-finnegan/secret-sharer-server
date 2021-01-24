@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "serverless": "^1.77.1",
+    "serverless": "^2.0.0",
     "stripe": "^8.115.0",
     "uuid": "^7.0.3"
   },
