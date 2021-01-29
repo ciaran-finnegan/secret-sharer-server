@@ -1,0 +1,51 @@
+const authProvider =
+  event.requestContext.identity.cognitoAuthenticationProvider;
+// Cognito authentication provider looks like:
+// cognito-idp.us-east-1.amazonaws.com/us-east-1_xxxxxxxxx,cognito-idp.us-east-1.amazonaws.com/us-east-1_aaaaaaaaa:CognitoSignIn:qqqqqqqq-1111-2222-3333-rrrrrrrrrrrr
+// Where us-east-1_aaaaaaaaa is the User Pool id
+// And qqqqqqqq-1111-2222-3333-rrrrrrrrrrrr is the User Pool User Id
+const parts = authProvider.split(":");
+const userPoolIdParts = parts[parts.length - 3].split("/");
+const userPoolId = userPoolIdParts[userPoolIdParts.length - 1];
+const userPoolUsername = parts[parts.length - 1];
+
+let cognitoUser = await getCognitoUser(userPoolUsername);
+
+
+// PROMISES NOTES
+
+const someFunction = () => {
+  return new Promise((resolve, reject) => {
+    thirdPartyAPI({ name: 'test' }, (error, response) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(response);
+      }
+    });
+  });
+};
+
+
+// Assume this is in your code somewhere...
+try {
+  someFunction().then((response) => {}).catch((error) => {});
+} catch (error) {
+  console.warn(error);
+}
+
+const downloadTurkeyDinner = async () => {
+  try {
+    const response = await someFunction(); // unhandledPromiseRejection
+  } catch (exception) {
+    throw new Error(`[actionName.downloadTurkeyDinner] ${exception.message}`);
+  }
+};
+
+async function downloadTurkeyDinner() {
+  try {
+    const response = await someFunction(); // unhandledPromiseRejection
+  } catch (exception) {
+    throw new Error(`[actionName.downloadTurkeyDinner] ${exception.message}`);
+  }
+}

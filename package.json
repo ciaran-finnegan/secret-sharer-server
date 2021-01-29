@@ -1,4 +1,9 @@
 {
+  "scripts": {
+    "logs": "serverless logs -t --function",
+    "deploy": "serverless deploy",
+    "deploy:function": "serverless deploy --function"
+  },
   "dependencies": {
     "amazon-cognito-identity-js": "^4.5.7",
     "aws-amplify": "^3.3.7",
