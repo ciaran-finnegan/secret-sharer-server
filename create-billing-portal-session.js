@@ -12,8 +12,7 @@ export const main = handler(async (event, context) => {
     const stripe = stripePackage(process.env.stripeSecretKey);
 
     // NOTE: See notes file at root of project for details on how this works.
-    const authProvider =
-      event.requestContext.identity.cognitoAuthenticationProvider;
+    const authProvider = event.requestContext.identity.cognitoAuthenticationProvider;
     const parts = authProvider.split(":");
     const userPoolUsername = parts[parts.length - 1];
     const cognitoUser = await getCognitoUser(userPoolUsername);
@@ -22,7 +21,7 @@ export const main = handler(async (event, context) => {
 
     const { Items } = await documentClient
       .scan({
-        TableName: "dev-users",
+        TableName: process.env.usersTableName,
         ScanIndexForward: true,
         FilterExpression: "#DYNOBASE_email = :email",
         ExpressionAttributeNames: {

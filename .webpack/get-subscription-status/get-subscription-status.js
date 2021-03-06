@@ -580,16 +580,16 @@ exports.computeSourceURL = computeSourceURL;
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports) {
+
+module.exports = require("aws-sdk");
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(7).install();
 
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports) {
-
-module.exports = require("aws-sdk");
 
 /***/ }),
 /* 3 */
@@ -4017,18 +4017,18 @@ __webpack_require__.r(__webpack_exports__);
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, "main", function() { return /* binding */ main; });
 
-// EXTERNAL MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/node_modules/source-map-support/register.js
-var register = __webpack_require__(1);
+// EXTERNAL MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/node_modules/source-map-support/register.js
+var register = __webpack_require__(2);
 
 // EXTERNAL MODULE: external "util"
 var external_util_ = __webpack_require__(6);
 var external_util_default = /*#__PURE__*/__webpack_require__.n(external_util_);
 
 // EXTERNAL MODULE: external "aws-sdk"
-var external_aws_sdk_ = __webpack_require__(2);
+var external_aws_sdk_ = __webpack_require__(1);
 var external_aws_sdk_default = /*#__PURE__*/__webpack_require__.n(external_aws_sdk_);
 
-// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/libs/debug-lib.js
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/debug-lib.js
 
 
 
@@ -4059,7 +4059,7 @@ function flush(e) {
   }) => console.debug(date, string));
   console.error(e);
 }
-// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/libs/handler-lib.js
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/handler-lib.js
 
 
 function handler(lambda) {
@@ -4092,13 +4092,13 @@ function handler(lambda) {
     };
   };
 }
-// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/libs/getCongitoUser.js
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/getCongitoUser.js
 
 
 // import AWS from "aws-sdk";
 // import * as AmazonCognitoIdentity from "amazon-cognito-identity-js";
 //ciaran - testing
-const AWS = __webpack_require__(2);
+const AWS = __webpack_require__(1);
 
 const cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider({
   apiVersion: "2016-04-18"
@@ -4122,9 +4122,10 @@ const cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider({
   console.log(user.UserAttributes[2].Value);
   return user;
 });
-// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/get-subscription-status.js
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/get-subscription-status.js
 
 // import AWS from "aws-sdk";
+
 
 
 const main = handler(async (event, context) => {
@@ -4136,7 +4137,31 @@ const main = handler(async (event, context) => {
   const cognitoUser = await getCongitoUser(userPoolUsername);
   console.log({
     cognitoUser
-  }); // const cognitoUserEmail = cognitoUser.UserAttributes[2].Value;
+  });
+  console.log(`DEBUG: CognitoUsername: ${cognitoUser.Username}`);
+  const date = new Date();
+  const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+  console.log(`DEBUG: firstDayOfMonth: ${firstDayOfMonth.getTime()} `);
+  const documentClient = new external_aws_sdk_default.a.DynamoDB.DocumentClient();
+  const {
+    Count
+  } = await documentClient.query({
+    "TableName": process.env.tableName,
+    "IndexName": "createdBy-index",
+    "KeyConditionExpression": "#DYNOBASE_createdBy = :pkey",
+    "ExpressionAttributeValues": {
+      ":pkey": cognitoUser.Username,
+      ":createdAt": firstDayOfMonth.getTime()
+    },
+    "ExpressionAttributeNames": {
+      "#DYNOBASE_createdBy": "createdBy",
+      "#DYNOBASE_createdAt": "createdAt"
+    },
+    "ScanIndexForward": true,
+    "Limit": 100,
+    "FilterExpression": "#DYNOBASE_createdAt >= :createdAt"
+  }).promise();
+  console.log(`DEBUG: Count: ${Count} `); // const cognitoUserEmail = cognitoUser.UserAttributes[2].Value;
   // const documentClient = new AWS.DynamoDB.DocumentClient();
   // const { Items } = await documentClient
   //   .scan(
@@ -4159,7 +4184,7 @@ const main = handler(async (event, context) => {
   // const user = Items && Items.find((item) => item.email === cognitoUserEmail);
 
   return {
-    test: "123"
+    seretsCreatedThisMonth: Count
   };
 });
 

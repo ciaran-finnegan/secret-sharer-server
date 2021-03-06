@@ -18,6 +18,7 @@ custom:
   stage: ${opt:stage, self:provider.stage}
   # Set the table name here so we can use it while testing locally
   tableName: ${self:custom.stage}-ciphers
+  usersTableName: ${self:custom.stage}-users
   
 provider:
   name: aws
@@ -35,6 +36,7 @@ provider:
   # under process.env.
   environment:
     tableName: ${self:custom.tableName}
+    usersTableName: ${self:custom.usersTableName}
     environment:  dev
     GETSECRET_URL: https://secret-sharer-client.s3-ap-southeast-2.amazonaws.com/getsecret.html?id=
     stripeSecretKey: ${env:STRIPE_SECRET_KEY}
@@ -84,9 +86,9 @@ functions:
     events:
       - http:
           path: getSubscriptionStatus
-          method: get
+          method: post
           cors: true
-          # authorizer: aws_iam (not auth  for dev, consider for  production)
+          authorizer: aws_iam
   create:
     handler: create.main
     events:
