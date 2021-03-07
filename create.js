@@ -1,10 +1,11 @@
+// import handler from "./libs/handler-lib";
 import * as uuid from "uuid";
 import AWS from "aws-sdk";
+import getCognitoUser from "./libs/getCongitoUser";
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-
-export function main(event, context, callback) {
+export async function main (event, context) {
   const id = uuid.v4();
   // URL for web form to retrieve secret
   // const getSecretURL = process.env.GETSECRET_URL;
@@ -28,8 +29,17 @@ export function main(event, context, callback) {
   }
   const expiresAt = validateExpiresAt(data.expiresAt);
 
+  // Get the callers Cognito User Name
+  const authProvider = event.requestContext.identity.cognitoAuthenticationProvider;
+  const parts = authProvider.split(":");
+  const userPoolUsername = parts[parts.length - 1];
+  const cognitoUser = await getCognitoUser(userPoolUsername);
+
+  console.log(`DEBUG: CognitoUsername: ${cognitoUser.Username}`);
+
   // Create a DynamoDB item
   // - 'id': a unique uuid
+  // - 'createdBy': the cognitoUser.Username from the users table
   // - 'cipher' contains the cipher of the secret encrypted with a passphrase
   // - 'hash' hash of passphrase
   // - 'hint' optional hint for the passphrase
@@ -37,58 +47,59 @@ export function main(event, context, callback) {
   // - 'content': parsed from request body, not yet implemented
   // - 'attachment': parsed from request body, not yet implemented
   // - 'createdAt': current Unix timestamp
-  const dynamoDBparams = {
+  
+  const params = {
     TableName: process.env.tableName,
     Item: {
       id: id,
+      createdBy: cognitoUser.Username,
+      createdAt: createdAt,
+      expiresAt: expiresAt,
       cipher:  cipher,
       hint: hint,
       hash: hash,
       attachment: data.attachment,
-      createdAt: createdAt,
-      expiresAt: expiresAt,
       retrievedAt: 0,
       retrieved: false,
       failedRetrievals: 0,
       lastFailedRetrievalAt: 0
     }
   };
-// debugging
-console.log(`id:  ${id}`);
-console.log(`cipher:  ${cipher}`);
-console.log(`hint:  ${hint}`);
-console.log(`hash:  ${hash}`);
-console.log(`createdAt:  ${createdAt}`);
-console.log(`expiresAt:  ${expiresAt}`);
-  dynamoDb.put(dynamoDBparams, (error, data) => {
+  // debugging
+  console.log(`id:  ${id}`);
+  console.log(`createdBy: ${cognitoUser.Username}`);
+  console.log(`cipher:  ${cipher}`);
+  console.log(`hint:  ${hint}`);
+  console.log(`hash:  ${hash}`);
+  console.log(`createdAt:  ${createdAt}`);
+  console.log(`expiresAt:  ${expiresAt}`);
+
+  try {
+    await dynamoDb.put(params).promise();
     // Set response headers to enable CORS (Cross-Origin Resource Sharing)
-    const headers = {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Credentials": true
-    };
+      const headers = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": true
+        };
 
-    // Return status code 500 on error
-    if (error) {
-      const response = {
-        statusCode: 500,
-        headers: headers,
-        body: JSON.stringify({ status: false, message: "Sorry that didn't work, please try again." })
-      };
-      console.error(`Error creating DynamoDB Item: \n`,error);
-      callback(null, response);
-      return;
-    }
-
-    // Return status code 200 and the URL and token for the newly created secret
-    const response = {
+    return {
       statusCode: 200,
       headers: headers,
       body: JSON.stringify({
-          status: true,
-          id: id,
-          message:  "Secret encrypted and stored successfully."
-        })
+        status: true,
+        id: id,
+        message:  "Secret encrypted and stored successfully."
+      })
     };
-    callback(null, response);
-  });
+  } catch (e) {
+    const headers = {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Credentials": true
+      };
+    return {
+      statusCode: 500,
+      headers: headers,
+      body: JSON.stringify({ status: false, message: "Sorry that didn't work, please try again." }),
+    };
+  }
 }

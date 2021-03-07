@@ -96,7 +96,7 @@ functions:
           path: putSecret
           method: post
           cors: true
-          # authorizer: aws_iam (not auth  for dev, consider for  production)
+          authorizer: aws_iam
   get:
     handler: get.main
     events:

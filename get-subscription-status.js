@@ -12,7 +12,6 @@ export const main = handler(async (event, context) => {
   const userPoolUsername = parts[parts.length - 1];
   const cognitoUser = await getCognitoUser(userPoolUsername);
 
-  console.log({ cognitoUser });
   console.log(`DEBUG: CognitoUsername: ${cognitoUser.Username}`);
 
   const date = new Date();
@@ -43,30 +42,6 @@ export const main = handler(async (event, context) => {
   .promise();
 
   console.log(`DEBUG: Count: ${Count} `);
-
-  // const cognitoUserEmail = cognitoUser.UserAttributes[2].Value;
-  // const documentClient = new AWS.DynamoDB.DocumentClient();
-
-  // const { Items } = await documentClient
-  //   .scan(
-  //     {
-  //       TableName: "dev-ciphers",
-  //       ScanIndexForward: true,
-  //       FilterExpression:
-  //         "#DYNOBASE_userId = :userId AND #DYNOBASE_createdAt >= :createdAt AND #DYNOBASE_createdAt <= :createdAt",
-  //       ExpressionAttributeNames: {
-  //         "#DYNOBASE_userId": "userId",
-  //         "#DYNOBASE_createdAt": "createdAt",
-  //       },
-  //       ExpressionAttributeValues: {
-  //         ":userId": "1234",
-  //         ":createdAt": "End of Month",
-  //       },
-  //     }
-  //   )
-  //   .promise();
-
-  // const user = Items && Items.find((item) => item.email === cognitoUserEmail);
 
   return {
     seretsCreatedThisMonth: Count,
