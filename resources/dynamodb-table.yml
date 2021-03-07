@@ -6,9 +6,18 @@ Resources:
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
+        - AttributeName: createdBy
+          AttributeType: S
       KeySchema:
         - AttributeName: id
           KeyType: HASH
+      GlobalSecondaryIndexes:
+          - IndexName: createdBy-index
+            KeySchema:
+              - AttributeName: createdBy
+                KeyType: HASH
+            Projection:
+              ProjectionType: 'ALL'
       # Set the capacity to auto-scale
       BillingMode: PAY_PER_REQUEST
   UsersTable:
@@ -18,8 +27,17 @@ Resources:
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
+        - AttributeName: email
+          AttributeType: S
       KeySchema:
         - AttributeName: id
           KeyType: HASH
+      GlobalSecondaryIndexes:
+          - IndexName: email-index
+            KeySchema:
+              - AttributeName: email
+                KeyType: HASH
+            Projection:
+              ProjectionType: 'ALL'
       # Set the capacity to auto-scale
       BillingMode: PAY_PER_REQUEST
