@@ -18,6 +18,7 @@ custom:
   stage: ${opt:stage, self:provider.stage}
   # Set the table name here so we can use it while testing locally
   tableName: ${self:custom.stage}-ciphers
+  usersTableName: ${self:custom.stage}-users
   
 provider:
   name: aws
@@ -35,11 +36,12 @@ provider:
   # under process.env.
   environment:
     tableName: ${self:custom.tableName}
+    usersTableName: ${self:custom.usersTableName}
     environment:  dev
     GETSECRET_URL: https://secret-sharer-client.s3-ap-southeast-2.amazonaws.com/getsecret.html?id=
     stripeSecretKey: ${env:STRIPE_SECRET_KEY}
-    businessSubscriptionPriceId: ${env:STRIPE_BUSINESS_SUBSCRIPTION_PRICE_ID}
-    enterpriseSubscriptionPriceId: ${env:STRIPE_ENTERPRISE_SUBSCRIPTION_PRICE_ID}
+    soloSubscriptionPriceId: ${env:STRIPE_SOLO_SUBSCRIPTION_PRICE_ID}
+    proSubscriptionPriceId: ${env:STRIPE_PRO_SUBSCRIPTION_PRICE_ID}
     domainURL: ${env:DOMAIN_URL}
     COGNITO_REGION: ${env:COGNITO_REGION}
     COGNITO_USER_POOL_ID: ${env:COGNITO_USER_POOL_ID}
@@ -79,7 +81,14 @@ provider:
         - cognito-idp:AdminGetUser
       Resource: ["arn:aws:cognito-idp:ap-southeast-2:*:*"]
 functions:
-
+  get-subscription-status:
+    handler: get-subscription-status.main
+    events:
+      - http:
+          path: getSubscriptionStatus
+          method: post
+          cors: true
+          authorizer: aws_iam
   create:
     handler: create.main
     events:
@@ -87,7 +96,7 @@ functions:
           path: putSecret
           method: post
           cors: true
-          # authorizer: aws_iam (not auth  for dev, consider for  production)
+          # authorizer: aws_iam (to allow anonymous secrets - to be modified in next release)
   get:
     handler: get.main
     events:
@@ -95,7 +104,7 @@ functions:
           path: getsecret
           method: post
           cors: true
-          # authorizer: aws_iam (not auth  for dev, consider for  production)
+          # authorizer: aws_iam (to allow anonymous secrets - to be modified in next release)
 
   billing:
     # Defines an HTTP API endpoint that calls the main function in billing.js
