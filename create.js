@@ -47,7 +47,7 @@ export async function main (event, context) {
   // - 'content': parsed from request body, not yet implemented
   // - 'attachment': parsed from request body, not yet implemented
   // - 'createdAt': current Unix timestamp
-  
+
   const params = {
     TableName: process.env.tableName,
     Item: {
