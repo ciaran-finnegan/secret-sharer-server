@@ -4,19 +4,20 @@ import getRequestUser from "./libs/getRequestUser";
 
 export const main = handler(async (event, context) => {
   try {
-    const domainURL = process.env.domainURL;
+    // const domainURL = process.env.domainURL;
     const stripe = stripePackage(process.env.stripeSecretKey);
 
     // NOTE: See notes file at root of project for details on how this works.
     const user = await getRequestUser(event.requestContext);
-    console.log({ user });
-    const session = await stripe.billingPortal.sessions.create({
-      customer: user && user.customerId,
-      return_url: `${domainURL}/settings`,
+
+    const customer = await stripe.customers.create({
+      email: (user && user.email) || "didntwork@gmail.com",
     });
 
+    console.log({ customer });
+
     return {
-      session,
+      customerId: customer && customer.id,
     };
   } catch (e) {
     return {

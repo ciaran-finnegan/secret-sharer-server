@@ -151,6 +151,17 @@ functions:
           method: post
           cors: true
           authorizer: aws_iam
+  create-stripe-customer:
+    # Defines an HTTP API endpoint that calls the main function in create-checkout-session.js
+    # - path: url path is /create-checkout-session
+    # - method: POST request
+    handler: create-stripe-customer.main
+    events:
+      - http:
+          path: create-stripe-customer
+          method: post
+          cors: true
+          authorizer: aws_iam
   stripe-webhook-OLD:
     # This is the one Ryan setup, it was working but isn't now, no idea why, replaced with a stanard REST endpoint below
     # Defines an HTTP API endpoint that calls the main function in stripe-webhook.js
