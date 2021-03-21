@@ -9080,7 +9080,7 @@ module.exports = StripeResource.extend({
 /* 102 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"_args\":[[\"stripe@8.115.0\",\"/Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/secret-sharer-server\"]],\"_from\":\"stripe@8.115.0\",\"_id\":\"stripe@8.115.0\",\"_inBundle\":false,\"_integrity\":\"sha512-f6S4ZtbWGJWLPPC79OcqVEHrmgeVoUT+oOGVe0NPJw+KqHgUBsIjIv8mJcc24/D+a6Vd9whqHobUIUZVQz9dCQ==\",\"_location\":\"/stripe\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"version\",\"registry\":true,\"raw\":\"stripe@8.115.0\",\"name\":\"stripe\",\"escapedName\":\"stripe\",\"rawSpec\":\"8.115.0\",\"saveSpec\":null,\"fetchSpec\":\"8.115.0\"},\"_requiredBy\":[\"/\"],\"_resolved\":\"https://registry.npmjs.org/stripe/-/stripe-8.115.0.tgz\",\"_spec\":\"8.115.0\",\"_where\":\"/Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/secret-sharer-server\",\"author\":{\"name\":\"Stripe\",\"email\":\"support@stripe.com\",\"url\":\"https://stripe.com/\"},\"bugs\":{\"url\":\"https://github.com/stripe/stripe-node/issues\"},\"bugs:\":\"https://github.com/stripe/stripe-node/issues\",\"contributors\":[{\"name\":\"Ask Bjørn Hansen\",\"email\":\"ask@develooper.com\",\"url\":\"http://www.askask.com/\"},{\"name\":\"Michelle Bu\",\"email\":\"michelle@stripe.com\"},{\"name\":\"Alex Sexton\",\"email\":\"alex@stripe.com\"},{\"name\":\"James Padolsey\"}],\"dependencies\":{\"@types/node\":\">=8.1.0\",\"qs\":\"^6.6.0\"},\"description\":\"Stripe API wrapper\",\"devDependencies\":{\"@typescript-eslint/eslint-plugin\":\"^2.13.0\",\"@typescript-eslint/parser\":\"^2.13.0\",\"chai\":\"~4.2.0\",\"chai-as-promised\":\"~7.1.1\",\"coveralls\":\"^3.0.0\",\"eslint\":\"^6.8.0\",\"eslint-config-prettier\":\"^4.1.0\",\"eslint-plugin-chai-friendly\":\"^0.4.0\",\"eslint-plugin-prettier\":\"^3.0.1\",\"mocha\":\"~6.1.4\",\"mocha-junit-reporter\":\"^1.23.1\",\"nock\":\"^10.0.6\",\"nyc\":\"^14.1.0\",\"prettier\":\"^1.16.4\",\"typescript\":\"^3.7.2\"},\"engines\":{\"node\":\"^8.1 || >=10.*\"},\"homepage\":\"https://github.com/stripe/stripe-node\",\"keywords\":[\"stripe\",\"payment processing\",\"credit cards\",\"api\"],\"license\":\"MIT\",\"main\":\"lib/stripe.js\",\"name\":\"stripe\",\"repository\":{\"type\":\"git\",\"url\":\"git://github.com/stripe/stripe-node.git\"},\"scripts\":{\"clean\":\"rm -rf ./.nyc_output ./node_modules/.cache ./coverage\",\"coveralls\":\"cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js\",\"fix\":\"yarn lint --fix && ./scripts/updateAPIVersion.js\",\"lint\":\"eslint --ext .js,.jsx,.ts .\",\"mocha\":\"nyc mocha\",\"mocha-only\":\"mocha\",\"report\":\"nyc -r text -r lcov report\",\"test\":\"yarn lint && yarn test-typescript && yarn mocha\",\"test-typescript\":\"tsc --build types/test\"},\"types\":\"types/2020-08-27/index.d.ts\",\"version\":\"8.115.0\"}");
+module.exports = JSON.parse("{\"_from\":\"stripe\",\"_id\":\"stripe@8.115.0\",\"_inBundle\":false,\"_integrity\":\"sha512-f6S4ZtbWGJWLPPC79OcqVEHrmgeVoUT+oOGVe0NPJw+KqHgUBsIjIv8mJcc24/D+a6Vd9whqHobUIUZVQz9dCQ==\",\"_location\":\"/stripe\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"tag\",\"registry\":true,\"raw\":\"stripe\",\"name\":\"stripe\",\"escapedName\":\"stripe\",\"rawSpec\":\"\",\"saveSpec\":null,\"fetchSpec\":\"latest\"},\"_requiredBy\":[\"#USER\",\"/\"],\"_resolved\":\"https://registry.npmjs.org/stripe/-/stripe-8.115.0.tgz\",\"_shasum\":\"1a4d0fe5037b4a9176ae67498c069b2ad7fae03a\",\"_spec\":\"stripe\",\"_where\":\"/Users/cfinnegan/Documents/dev/secret-sharer-server\",\"author\":{\"name\":\"Stripe\",\"email\":\"support@stripe.com\",\"url\":\"https://stripe.com/\"},\"bugs\":{\"url\":\"https://github.com/stripe/stripe-node/issues\"},\"bugs:\":\"https://github.com/stripe/stripe-node/issues\",\"bundleDependencies\":false,\"contributors\":[{\"name\":\"Ask Bjørn Hansen\",\"email\":\"ask@develooper.com\",\"url\":\"http://www.askask.com/\"},{\"name\":\"Michelle Bu\",\"email\":\"michelle@stripe.com\"},{\"name\":\"Alex Sexton\",\"email\":\"alex@stripe.com\"},{\"name\":\"James Padolsey\"}],\"dependencies\":{\"@types/node\":\">=8.1.0\",\"qs\":\"^6.6.0\"},\"deprecated\":false,\"description\":\"Stripe API wrapper\",\"devDependencies\":{\"@typescript-eslint/eslint-plugin\":\"^2.13.0\",\"@typescript-eslint/parser\":\"^2.13.0\",\"chai\":\"~4.2.0\",\"chai-as-promised\":\"~7.1.1\",\"coveralls\":\"^3.0.0\",\"eslint\":\"^6.8.0\",\"eslint-config-prettier\":\"^4.1.0\",\"eslint-plugin-chai-friendly\":\"^0.4.0\",\"eslint-plugin-prettier\":\"^3.0.1\",\"mocha\":\"~6.1.4\",\"mocha-junit-reporter\":\"^1.23.1\",\"nock\":\"^10.0.6\",\"nyc\":\"^14.1.0\",\"prettier\":\"^1.16.4\",\"typescript\":\"^3.7.2\"},\"engines\":{\"node\":\"^8.1 || >=10.*\"},\"homepage\":\"https://github.com/stripe/stripe-node\",\"keywords\":[\"stripe\",\"payment processing\",\"credit cards\",\"api\"],\"license\":\"MIT\",\"main\":\"lib/stripe.js\",\"name\":\"stripe\",\"repository\":{\"type\":\"git\",\"url\":\"git://github.com/stripe/stripe-node.git\"},\"scripts\":{\"clean\":\"rm -rf ./.nyc_output ./node_modules/.cache ./coverage\",\"coveralls\":\"cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js\",\"fix\":\"yarn lint --fix && ./scripts/updateAPIVersion.js\",\"lint\":\"eslint --ext .js,.jsx,.ts .\",\"mocha\":\"nyc mocha\",\"mocha-only\":\"mocha\",\"report\":\"nyc -r text -r lcov report\",\"test\":\"yarn lint && yarn test-typescript && yarn mocha\",\"test-typescript\":\"tsc --build types/test\"},\"types\":\"types/2020-08-27/index.d.ts\",\"version\":\"8.115.0\"}");
 
 /***/ }),
 /* 103 */
@@ -9093,10 +9093,10 @@ __webpack_require__.r(__webpack_exports__);
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, "main", function() { return /* binding */ main; });
 
-// EXTERNAL MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/node_modules/source-map-support/register.js
+// EXTERNAL MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/node_modules/source-map-support/register.js
 var register = __webpack_require__(2);
 
-// EXTERNAL MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/node_modules/stripe/lib/stripe.js
+// EXTERNAL MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/node_modules/stripe/lib/stripe.js
 var lib_stripe = __webpack_require__(18);
 var stripe_default = /*#__PURE__*/__webpack_require__.n(lib_stripe);
 
@@ -9108,7 +9108,7 @@ var external_util_default = /*#__PURE__*/__webpack_require__.n(external_util_);
 var external_aws_sdk_ = __webpack_require__(5);
 var external_aws_sdk_default = /*#__PURE__*/__webpack_require__.n(external_aws_sdk_);
 
-// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/libs/debug-lib.js
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/debug-lib.js
 
 
 
@@ -9139,7 +9139,7 @@ function flush(e) {
   }) => console.debug(date, string));
   console.error(e);
 }
-// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/libs/handler-lib.js
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/handler-lib.js
 
 
 function handler(lambda) {
@@ -9172,7 +9172,7 @@ function handler(lambda) {
     };
   };
 }
-// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/libs/getCongitoUser.js
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/getCongitoUser.js
 
 
 // import AWS from "aws-sdk";
@@ -9202,7 +9202,7 @@ const cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider({
   console.log(user.UserAttributes[2].Value);
   return user;
 });
-// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/libs/getRequestUser.js
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/getRequestUser.js
 
 
 
@@ -9225,38 +9225,43 @@ const cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider({
     ExpressionAttributeValues: {
       ":email": cognitoUserEmail
     }
-  }).promise();
-  console.log({
-    authProvider,
-    parts,
-    userPoolUsername,
-    cognitoUser,
-    cognitoUserEmail,
-    documentClient,
-    Items
-  });
-  return Items && Items.find(item => item.email === cognitoUserEmail);
+  }).promise(); // Ciaran - not sure what we are trying to achieve here?
+  // Ask Ryan to explain what this is doing
+  // Commenting out for now and returning user object below
+  // won't contain a Stripe e-mail or Customer ID until a checkoutsession has completed
+  // return Items && Items.find((item) => item.email === cognitoUserEmail);
+
+  const user = {
+    "cognitoUser": cognitoUser,
+    "cognitoUserEmail": cognitoUserEmail,
+    "userTableId": Items[0],
+    "stripeUserEmail": Items[3],
+    // should match cognitoUserEmail, TODO set after Stripe customer creation
+    "stripeCustomerId": Items[4] // TODO set after Stripe customer creation
+
+  };
+  console.log(`DEBUG: User Object: ${user}`);
+  return user;
 });
-// CONCATENATED MODULE: /Users/rglover/projects/cleverbeagle/customers/ciaran-finnegan/sss/create-billing-portal-session.js
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/create-stripe-customer.js
 
 
 
 
 const main = handler(async (event, context) => {
   try {
-    const domainURL = process.env.domainURL;
+    // const domainURL = process.env.domainURL;
     const stripe = stripe_default()(process.env.stripeSecretKey); // NOTE: See notes file at root of project for details on how this works.
 
     const user = await getRequestUser(event.requestContext);
-    console.log({
-      user
+    const customer = await stripe.customers.create({
+      email: user && user.cognitoUserEmail || "noemail@error.com"
     });
-    const session = await stripe.billingPortal.sessions.create({
-      customer: user && user.customerId,
-      return_url: `${domainURL}/settings`
+    console.log({
+      customer
     });
     return {
-      session
+      customerId: customer && customer.id
     };
   } catch (e) {
     return {
@@ -9270,4 +9275,4 @@ const main = handler(async (event, context) => {
 
 /***/ })
 /******/ ])));
-//# sourceMappingURL=create-billing-portal-session.js.map
+//# sourceMappingURL=create-stripe-customer.js.map

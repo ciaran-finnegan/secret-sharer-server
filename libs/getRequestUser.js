@@ -23,15 +23,22 @@ export default async (requestContext = {}) => {
     })
     .promise();
 
-  console.log({
-    authProvider,
-    parts,
-    userPoolUsername,
-    cognitoUser,
-    cognitoUserEmail,
-    documentClient,
-    Items,
-  });
+  // Ciaran - not sure what we are trying to achieve here?
+  // Ask Ryan to explain what this is doing
+  // Commenting out for now and returning user object below
+  // won't contain a Stripe e-mail or Customer ID until a checkoutsession has completed
 
-  return Items && Items.find((item) => item.email === cognitoUserEmail);
+  // return Items && Items.find((item) => item.email === cognitoUserEmail);
+
+  const user = {
+    "cognitoUser" : cognitoUser,
+    "cognitoUserEmail" : cognitoUserEmail,
+    "userTableId" : Items[0],
+    "stripeUserEmail" : Items[3], // should match cognitoUserEmail, TODO set after Stripe customer creation
+    "stripeCustomerId" : Items[4] // TODO set after Stripe customer creation
+  };
+
+  console.log(`DEBUG: User Object: ${user}`);
+
+  return user;
 };

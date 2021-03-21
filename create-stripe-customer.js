@@ -11,7 +11,7 @@ export const main = handler(async (event, context) => {
     const user = await getRequestUser(event.requestContext);
 
     const customer = await stripe.customers.create({
-      email: (user && user.email) || "didntwork@gmail.com",
+      email: (user && user.cognitoUserEmail) || "noemail@error.com",
     });
 
     console.log({ customer });
