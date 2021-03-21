@@ -33,9 +33,10 @@ export default async (requestContext = {}) => {
   const user = {
     "cognitoUser" : cognitoUser,
     "cognitoUserEmail" : cognitoUserEmail,
-    "userTableId" : Items[0],
-    "stripeUserEmail" : Items[3], // should match cognitoUserEmail, TODO set after Stripe customer creation
-    "stripeCustomerId" : Items[4] // TODO set after Stripe customer creation
+    "userId" : Items[0],
+    "stripeUserEmail" : Items[1], // should match cognitoUserEmail, TODO set after Stripe customer creation
+    "stripeCustomerId" : Items[2],
+    "stripeSubscription" : Items[3]
   };
 
   console.log(`DEBUG: User Object: ${user}`);
