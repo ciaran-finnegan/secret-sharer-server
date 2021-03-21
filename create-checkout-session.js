@@ -28,7 +28,9 @@ export const main = handler(async (event, context) => {
         {
           price: priceId,
           quantity: 1,
-          currency: "",
+          // Bugfix: testing 
+          // client throws error message: "You may only specify one of these parameters: currency, price."
+          // currency: "",
         },
       ],
       // ?session_id={CHECKOUT_SESSION_ID} means the redirect will have the session ID set as a query param
