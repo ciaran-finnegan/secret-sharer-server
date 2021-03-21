@@ -3,6 +3,7 @@ import checkoutSessionCompleted from "./stripe/webhooks/checkout.session.complet
 
 const webhooks = {
   "checkout.session.completed": checkoutSessionCompleted,
+  "customer.subscription.updated": customerSubscriptionUpdated
 };
 
 // TODO

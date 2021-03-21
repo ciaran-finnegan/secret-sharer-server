@@ -55,6 +55,9 @@ export const main = handler(async (event, context) => {
       { order: 2, name: "pro", maxSecrets: process.env.STRIPE_PRO_MAX_MONTHLY_SECRETS },
     ],
     currentPlan: "pro", // TODO: Map price plan to string name of plan before responding. ['free', 'solo', 'pro']
+    // handle customer.subscription.updated event from stripe
+    // items.plan.nickname: "Solo Monthly",
+    // items.plan.product: "prod_J1JpFshOXkwR3V",
     seretsCreatedThisMonth: Count,
     planSecrets,
     secretsAvailable: planSecrets - Count,
