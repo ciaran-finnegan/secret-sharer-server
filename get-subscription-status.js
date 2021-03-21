@@ -42,13 +42,17 @@ export const main = handler(async (event, context) => {
 
   console.log(`DEBUG: Count: ${Count} `);
 
+
+  const process.env.tableName,
+
+
   const planSecrets = 2; // TODO:
 
   return {
     plans: [
-      { order: 0, name: "free" },
-      { order: 1, name: "solo" },
-      { order: 2, name: "pro" },
+      { order: 0, name: "free", maxSecrets: process.env.STRIPE_FREE_MAX_MONTHLY_SECRETS },
+      { order: 1, name: "solo", maxSecrets: process.env.STRIPE_SOLO_MAX_MONTHLY_SECRETS },
+      { order: 2, name: "pro", maxSecrets: process.env.STRIPE_PRO_MAX_MONTHLY_SECRETS },
     ],
     currentPlan: "pro", // TODO: Map price plan to string name of plan before responding. ['free', 'solo', 'pro']
     seretsCreatedThisMonth: Count,

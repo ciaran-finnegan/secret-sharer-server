@@ -12,7 +12,7 @@ export default async (webhookData = null) => {
       webhookData.subscription
     );
 
-    await putItem("dev-users", {
+    await putItem(process.env.usersTableName, {
       email: _.get(stripeCustomer, "email", null),
       customerId: _.get(stripeCustomer, "id", null),
       subscription: {
