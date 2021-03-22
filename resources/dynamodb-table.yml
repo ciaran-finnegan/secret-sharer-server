@@ -29,6 +29,8 @@ Resources:
           AttributeType: S
         - AttributeName: email
           AttributeType: S
+        - AttributeName: customerId
+          AttributeType: S
       KeySchema:
         - AttributeName: id
           KeyType: HASH
@@ -36,6 +38,12 @@ Resources:
           - IndexName: email-index
             KeySchema:
               - AttributeName: email
+                KeyType: HASH
+            Projection:
+              ProjectionType: 'ALL'
+          - IndexName: customerId-index
+            KeySchema:
+              - AttributeName: customerId
                 KeyType: HASH
             Projection:
               ProjectionType: 'ALL'

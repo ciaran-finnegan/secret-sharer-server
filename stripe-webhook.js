@@ -1,5 +1,7 @@
 import handler from "./libs/handler-lib";
 import checkoutSessionCompleted from "./stripe/webhooks/checkout.session.completed";
+import customerSubscriptionUpdated from "./stripe/webhooks/customer.subscription.updated";
+
 
 const webhooks = {
   "checkout.session.completed": checkoutSessionCompleted,

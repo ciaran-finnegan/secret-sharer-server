@@ -42,10 +42,6 @@ export const main = handler(async (event, context) => {
 
   console.log(`DEBUG: Count: ${Count} `);
 
-
-  const process.env.tableName,
-
-
   const planSecrets = 2; // TODO:
 
   return {
