@@ -2,7 +2,9 @@
 // Update users table with items.plan.nickname: and items.plan.product:
 import _ from "lodash";
 // import stripe from "../index";
-import updateItem from "../../libs/dynamodb/updateItem";
+// import updateItem from "../../libs/dynamodb/updateItem";
+import AWS from "aws-sdk";
+// import dynamodb from "../dynamodb";
 
 export default async (webhookData = null) => {
   try {
@@ -15,28 +17,48 @@ export default async (webhookData = null) => {
     // const stripeSubscription = await stripe.subscriptions.retrieve(
     //   webhookData.subscription
     // );
-    console.log(`DEBUG: customerId: ${webhookData.customer}`);
-    console.log('DEBUG: items.data.0.plan.nickname');
-    console.log(_.get(webhookData, "items.data.0.plan.nickname", null));
-    console.log('DEBUG: items.data.0.plan.product');
-    console.log(_.get(webhookData, "items.data.0.plan.product", null));
 
-    const params = {
-        customerId: webhookData.customer,
-      subscription: {
-        productId: _.get(webhookData, "items.data.0.plan.product", null),
-        nickname: _.get(webhookData, "items.data.0.plan.nickname", null),
-      },
+    const customerId = webhookData.customer;
+    const productId = _.get(webhookData, "items.data.0.plan.product", null);
+    const nickname =  _.get(webhookData, "items.data.0.plan.nickname", null);
+
+    console.log(`DEBUG: customerId: ${customerId}`);
+    console.log(`DEBUG: productId: ${productId}`);
+    console.log(`DEBUG: nickname: ${nickname}`);
+
+    const documentClient = new AWS.DynamoDB.DocumentClient();
+
+    const getParams = {
+      TableName: process.env.usersTableName,
+      // 'Key' defines the key of the item to be retrieved
+      Key: {
+        customerId: customerId
+      }
     };
 
-    console.log(`DEBUG: Update Item Params`);
-    console.log(params);
+    const { Item } = await documentClient.get(getParams).promise();
 
+    console.log(`DEBUG: query returned: ${Item}`);
 
-// TODO, query users table by stripeCustomer, new Secondary Index required
-    await updateItem(process.env.usersTableName, params);
+    const id = Item[0];
 
+    console.log(`DEBUG: id: ${id}`);
+
+    const updateParams = {
+      TableName: process.env.usersTableName,
+      Key: {
+        id : id
+        },
+        UpdateExpression: "set productId = :productId",
+        ExpressionAttributeValues:{
+            ":productId":productId
+        },
+        ReturnValues:"UPDATED_NEW"
+    };
+
+    await documentClient.update(updateParams).promise();
     return Promise.resolve();
+
   } catch (exception) {
     console.log('DEBUG:: Exception running customer.subscription.updated');
     console.warn(exception);

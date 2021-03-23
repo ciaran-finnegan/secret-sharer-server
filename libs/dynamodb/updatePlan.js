@@ -6,6 +6,7 @@ export default (table = null, data = {}) => {
     throw new Error("Must pass data to put and table to insert.");
   }
 
+  
   return dynamodb
     .updateItem({
       Item: AWS.DynamoDB.Converter.marshall({
