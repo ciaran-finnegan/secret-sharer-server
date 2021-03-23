@@ -28,19 +28,25 @@ export default async (webhookData = null) => {
 
     const documentClient = new AWS.DynamoDB.DocumentClient();
 
-    const getParams = {
-      TableName: process.env.usersTableName,
-      // 'Key' defines the key of the item to be retrieved
-      Key: {
-        customerId: customerId
-      }
+    const queryParams = {
+      "TableName": process.env.usersTableName,
+      "IndexName": "customerId-index",
+      "KeyConditionExpression": "#DYNOBASE_customerId = :pkey",
+      "ExpressionAttributeValues": {
+        ":pkey": customerId
+      },
+      "ExpressionAttributeNames": {
+        "#DYNOBASE_customerId": "customerId"
+      },
+      "ScanIndexForward": true,
+      "Limit": 100
     };
 
-    const { Item } = await documentClient.get(getParams).promise();
+    const { Items } = await documentClient.query(queryParams).promise();
 
-    console.log(`DEBUG: query returned: ${Item}`);
+    console.log(`DEBUG: query returned: ${Items}`);
 
-    const id = Item[0];
+    const id = Items[0];
 
     console.log(`DEBUG: id: ${id}`);
 
