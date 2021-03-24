@@ -1,6 +1,7 @@
 // import AWS from "aws-sdk";
 import handler from "./libs/handler-lib";
 import getCognitoUser from "./libs/getCongitoUser";
+import getRequestUser from "./libs/getRequestUser";
 import AWS from "aws-sdk";
 
 export const main = handler(async (event, context) => {
@@ -42,20 +43,25 @@ export const main = handler(async (event, context) => {
 
   console.log(`DEBUG: Count: ${Count} `);
 
-  const planSecrets = 2; // TODO:
+  const user = await getRequestUser(event.requestContext);
+    console.log({ user });
+
+  const stripeCurrentPlanNickName = user.stripeCurrentPlanNickName;
+  const stripeSubscriptionStatus = user.stripeSubscriptionStatus;
+  const stripeSubscriptionCurrent_period_end = user.stripeSubscriptionCurrent_period_end; // TODO:
+  const maxSecrets = 3; // TODO:
 
   return {
     plans: [
-      { order: 0, name: "free", maxSecrets: process.env.STRIPE_FREE_MAX_MONTHLY_SECRETS },
-      { order: 1, name: "solo", maxSecrets: process.env.STRIPE_SOLO_MAX_MONTHLY_SECRETS },
-      { order: 2, name: "pro", maxSecrets: process.env.STRIPE_PRO_MAX_MONTHLY_SECRETS },
+      { order: 0, name: "Free", maxSecrets: process.env.STRIPE_FREE_MAX_MONTHLY_SECRETS },
+      { order: 1, name: "Solo Monthly", maxSecrets: process.env.STRIPE_SOLO_MAX_MONTHLY_SECRETS },
+      { order: 2, name: "Pro Monthly", maxSecrets: process.env.STRIPE_PRO_MAX_MONTHLY_SECRETS },
     ],
-    currentPlan: "pro", // TODO: Map price plan to string name of plan before responding. ['free', 'solo', 'pro']
-    // handle customer.subscription.updated event from stripe
-    // items.plan.nickname: "Solo Monthly",
-    // items.plan.product: "prod_J1JpFshOXkwR3V",
+    stripeCurrentPlanNickName: stripeCurrentPlanNickName, // TODO: Update Plan names on client to match Stripe ['Free', 'Solo Monthly', 'Pro Monthly']
+    stripeSubscriptionStatus: stripeSubscriptionStatus,
+    stripeSubscriptionCurrent_period_end: stripeSubscriptionCurrent_period_end,
     seretsCreatedThisMonth: Count,
-    planSecrets,
-    secretsAvailable: planSecrets - Count,
+    maxSecrets, // TODO: Map plans array to match plan name and use maxSecrets
+    secretsAvailable: maxSecrets - Count,
   };
 });

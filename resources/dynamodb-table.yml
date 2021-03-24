@@ -27,15 +27,15 @@ Resources:
       AttributeDefinitions:
         - AttributeName: customerId
           AttributeType: S
-        - AttributeName: email
+        - AttributeName: customer_email
           AttributeType: S
       KeySchema:
         - AttributeName: customerId
           KeyType: HASH
       GlobalSecondaryIndexes:
-          - IndexName: email-index
+          - IndexName: customer_email-index
             KeySchema:
-              - AttributeName: email
+              - AttributeName: customer_email
                 KeyType: HASH
             Projection:
               ProjectionType: 'ALL'

@@ -13,12 +13,12 @@ export default async (requestContext = {}) => {
     .scan({
       TableName: process.env.usersTableName,
       ScanIndexForward: true,
-      FilterExpression: "#DYNOBASE_email = :email",
+      "FilterExpression": "#DYNOBASE_customer_email = :customer_email",
       ExpressionAttributeNames: {
-        "#DYNOBASE_email": "email",
+        "#DYNOBASE_customer_email": "customer_email"
       },
       ExpressionAttributeValues: {
-        ":email": cognitoUserEmail,
+        ":customer_email": cognitoUserEmail,
       },
     })
     .promise();
@@ -33,10 +33,14 @@ export default async (requestContext = {}) => {
   const user = {
     "cognitoUser" : cognitoUser,
     "cognitoUserEmail" : cognitoUserEmail,
-    "userId" : Items[0],
-    "stripeUserEmail" : Items[1], // should match cognitoUserEmail, TODO set after Stripe customer creation
-    "stripeCustomerId" : Items[2],
-    "stripeSubscription" : Items[3]
+    "stripeCurrentPlanNickName" : Items[0].nickname,
+    "stripeSubscriptionId" : Items[0].stripeSubscriptionId,
+    "stripeSubscriptionStatus" : Items[0].stripeSubscriptionStatus,
+    "stripeCustomerEmail" : Items[0].customer_email, // should match cognitoUserEmail, TODO set after Stripe customer creation
+    "stripeSubscriptionCurrent_period_end" : Items[0].stripeSubscriptionCurrent_period_end,
+    "stripeProductId" : Items[0].productId,
+    "stripeSubscriptionItem" : Items[0].stripeSubscriptionItem,
+    "stripeCustomerId" : Items[0].customerId
   };
 
   console.log(`DEBUG: User Object: ${user}`);
