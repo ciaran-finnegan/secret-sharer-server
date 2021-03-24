@@ -11,7 +11,7 @@ export const main = handler(async (event, context) => {
     const user = await getRequestUser(event.requestContext);
     console.log({ user });
     const session = await stripe.billingPortal.sessions.create({
-      customer: user && user.customerId,
+      customer: user && user.stripeCustomerId,
       return_url: `${domainURL}/settings`,
     });
 

@@ -40,8 +40,12 @@ provider:
     environment:  dev
     GETSECRET_URL: https://secret-sharer-client.s3-ap-southeast-2.amazonaws.com/getsecret.html?id=
     stripeSecretKey: ${env:STRIPE_SECRET_KEY}
-    soloSubscriptionPriceId: ${env:STRIPE_SOLO_SUBSCRIPTION_PRICE_ID}
+    freeSubscriptionPriceId: ${env:STRIPE_FREE_SUBSCRIPTION_PRICE_ID}
     proSubscriptionPriceId: ${env:STRIPE_PRO_SUBSCRIPTION_PRICE_ID}
+    soloSubscriptionPriceId: ${env:STRIPE_SOLO_SUBSCRIPTION_PRICE_ID}
+    freeMaxMonthlySecrets: ${env:STRIPE_FREE_MAX_MONTHLY_SECRETS}
+    soloMaxMonthlySecrets: ${env:STRIPE_SOLO_MAX_MONTHLY_SECRETS}
+    proMaxMonthlySecrets: ${env:STRIPE_PRO_MAX_MONTHLY_SECRETS}
     domainURL: ${env:DOMAIN_URL}
     COGNITO_REGION: ${env:COGNITO_REGION}
     COGNITO_USER_POOL_ID: ${env:COGNITO_USER_POOL_ID}

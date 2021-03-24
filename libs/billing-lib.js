@@ -4,11 +4,12 @@ export function getPriceId(subscriptionName) {
   // const enterpriseSubscriptionPriceId =
   // process.env.enterpriseSubscriptionPriceId;
 
+  const freeSubscriptionPriceId = process.env.freeSubscriptionPriceId;
   const soloSubscriptionPriceId = process.env.soloSubscriptionPriceId;
   const proSubscriptionPriceId = process.env.proSubscriptionPriceId;
 
   if (subscriptionName === "free") {
-    return null;
+    return freeSubscriptionPriceId;
   }
 
   if (subscriptionName === "solo") {
