@@ -2,8 +2,8 @@
 // Update users table with items.plan.nickname: and items.plan.product:
 import _ from "lodash";
 // import stripe from "../index";
-// import updateItem from "../../libs/dynamodb/updateItem";
-import AWS from "aws-sdk";
+import updateItem from "../../libs/dynamodb/updateItem";
+// import AWS from "aws-sdk";
 // import dynamodb from "../dynamodb";
 
 export default async (webhookData = null) => {
@@ -26,43 +26,23 @@ export default async (webhookData = null) => {
     console.log(`DEBUG: productId: ${productId}`);
     console.log(`DEBUG: nickname: ${nickname}`);
 
-    const documentClient = new AWS.DynamoDB.DocumentClient();
+    const tableName = process.env.usersTableName;
+    console.log(`DEBUG:: tableName : ${tableName}`);
 
-    const queryParams = {
-      "TableName": process.env.usersTableName,
-      "IndexName": "customerId-index",
-      "KeyConditionExpression": "#DYNOBASE_customerId = :pkey",
-      "ExpressionAttributeValues": {
-        ":pkey": customerId
-      },
-      "ExpressionAttributeNames": {
-        "#DYNOBASE_customerId": "customerId"
-      },
-      "ScanIndexForward": true,
-      "Limit": 100
+    const primaryKey = customerId;
+    console.log(`DEBUG:: primaryKey : ${primaryKey}`);
+
+    const tableData = {
+      "productId" : productId,
+      "nickname" : nickname
     };
 
-    const { Items } = await documentClient.query(queryParams).promise();
+    console.log(`DEBUG:: tableData.productId : ${tableData.productId}`);
+    console.log(`DEBUG:: tableData.nickname : ${tableData.nickname}`);
+    console.log(`DEBUG:: tableData : ${JSON.stringify.tableData}`);
 
-    console.log(`DEBUG: query returned: ${Items}`);
+    await updateItem(tableName, primaryKey, tableData);
 
-    const id = Items[0];
-
-    console.log(`DEBUG: id: ${id}`);
-
-    const updateParams = {
-      TableName: process.env.usersTableName,
-      Key: {
-        id : id
-        },
-        UpdateExpression: "set productId = :productId",
-        ExpressionAttributeValues:{
-            ":productId":productId
-        },
-        ReturnValues:"UPDATED_NEW"
-    };
-
-    await documentClient.update(updateParams).promise();
     return Promise.resolve();
 
   } catch (exception) {

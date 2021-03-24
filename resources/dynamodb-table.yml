@@ -25,25 +25,17 @@ Resources:
     Properties:
       TableName: ${self:custom.usersTableName}
       AttributeDefinitions:
-        - AttributeName: id
+        - AttributeName: customerId
           AttributeType: S
         - AttributeName: email
           AttributeType: S
-        - AttributeName: customerId
-          AttributeType: S
       KeySchema:
-        - AttributeName: id
+        - AttributeName: customerId
           KeyType: HASH
       GlobalSecondaryIndexes:
           - IndexName: email-index
             KeySchema:
               - AttributeName: email
-                KeyType: HASH
-            Projection:
-              ProjectionType: 'ALL'
-          - IndexName: customerId-index
-            KeySchema:
-              - AttributeName: customerId
                 KeyType: HASH
             Projection:
               ProjectionType: 'ALL'
