@@ -19,6 +19,7 @@ custom:
   # Set the table name here so we can use it while testing locally
   tableName: ${self:custom.stage}-ciphers
   usersTableName: ${self:custom.stage}-users-table
+  invitesTableName: ${self:custom.stage}-invites-table
   
 provider:
   name: aws
@@ -37,6 +38,7 @@ provider:
   environment:
     tableName: ${self:custom.tableName}
     usersTableName: ${self:custom.usersTableName}
+    invitesTableName: ${self:custom.invitesTableName}
     environment:  dev
     GETSECRET_URL: https://secret-sharer-client.s3-ap-southeast-2.amazonaws.com/getsecret.html?id=
     stripeSecretKey: ${env:STRIPE_SECRET_KEY}
@@ -51,6 +53,7 @@ provider:
     COGNITO_USER_POOL_ID: ${env:COGNITO_USER_POOL_ID}
     COGNITO_APP_CLIENT_ID: ${env:COGNITO_APP_CLIENT_ID}
     COGNITO_IDENTITY_POOL_ID: ${env:COGNITO_IDENTITY_POOL_ID}
+    SLS_DEBUG: ${env:SLS_DEBUG}
     
   iamRoleStatements:
     - Effect: "Allow"
@@ -192,6 +195,18 @@ functions:
           path: stripe-webhook
           method: post
           cors: true
+
+  send-team-invite:
+    # Defines an HTTP API endpoint that calls the main function in checkout-session.js
+    # - path: url path is /checkout-session
+    # - method: POST request
+    handler: send-team-invite.main
+    events:
+      - http:
+          path: send-team-invite
+          method: post
+          cors: true
+          authorizer: aws_iam
 # Create our resources with separate CloudFormation templates
 resources:
   # API Gateway Errors
