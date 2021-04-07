@@ -48,8 +48,17 @@ Resources:
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
+        - AttributeName: teamId
+          AttributeType: S
       KeySchema:
         - AttributeName: id
           KeyType: HASH
+      GlobalSecondaryIndexes:
+          - IndexName: teamId-index
+            KeySchema:
+              - AttributeName: teamId
+                KeyType: HASH
+            Projection:
+              ProjectionType: 'ALL'
       # Set the capacity to auto-scale
       BillingMode: PAY_PER_REQUEST

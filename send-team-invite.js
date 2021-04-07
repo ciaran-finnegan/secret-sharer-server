@@ -6,7 +6,14 @@ import putItem from "./libs/dynamodb/putItem";
 export const main = handler(async (event, context) => {
   try {
     const id = uuid.v4();
-    console.log(event);
+    const data = JSON.parse(event.body);
+    const tableName = process.env.invitesTableName;
+    console.log(`DEBUG: tableName: ${tableName}`);
+    console.log(`DEBUG: teamId: ${data.teamId}`);
+    console.log(`DEBUG: emailAddress: ${data.emailAddress}`);
+    console.log(`DEBUG: role: ${data.role}`);
+    console.log(`DEBUG: event: ${JSON.stringify(data)}`);
+
 
     /*
       TODO:
@@ -16,7 +23,7 @@ export const main = handler(async (event, context) => {
       3. Return.
     */
 
-    await putItem("invites", id, event.body || {});
+    await putItem(tableName, id, data);
 
     console.log("TODO: SEND EMAIL HERE");
 

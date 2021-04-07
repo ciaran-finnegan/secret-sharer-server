@@ -195,15 +195,21 @@ functions:
           path: stripe-webhook
           method: post
           cors: true
+  
+  get-team-invites:
+    handler: get-team-invites.main
+    events:
+      - http:
+          path: invites/get
+          method: post
+          cors: true
+          authorizer: aws_iam
 
   send-team-invite:
-    # Defines an HTTP API endpoint that calls the main function in checkout-session.js
-    # - path: url path is /checkout-session
-    # - method: POST request
     handler: send-team-invite.main
     events:
       - http:
-          path: send-team-invite
+          path: invites/send
           method: post
           cors: true
           authorizer: aws_iam
