@@ -48,12 +48,6 @@ Resources:
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
-        - AttributeName: email_address
-          AttributeType: S
-        - AttributeName: role
-          AttributeType: S
-        - AttributeName: invited_at
-          AttributeType: S
       KeySchema:
         - AttributeName: id
           KeyType: HASH
