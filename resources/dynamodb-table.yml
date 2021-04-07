@@ -41,3 +41,21 @@ Resources:
               ProjectionType: 'ALL'
       # Set the capacity to auto-scale
       BillingMode: PAY_PER_REQUEST
+  InvitesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:custom.invitesTableName}
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: email_address
+          AttributeType: S
+        - AttributeName: role
+          AttributeType: S
+        - AttributeName: invited_at
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      # Set the capacity to auto-scale
+      BillingMode: PAY_PER_REQUEST
