@@ -2,6 +2,7 @@
 import * as uuid from "uuid";
 import handler from "./libs/handler-lib";
 import putItem from "./libs/dynamodb/putItem";
+import sendEmail from "./libs/email-lib";
 
 export const main = handler(async (event, context) => {
   try {
@@ -26,6 +27,21 @@ export const main = handler(async (event, context) => {
     await putItem(tableName, id, data);
 
     console.log("TODO: SEND EMAIL HERE");
+    const toAddresses = [ data.emailAddress ];
+    const sourceEmailAddress = "noreply@vanish.link";
+    const subject = "You've been invited to activate your Vanish.link account";
+    const body = `Hi,
+    You have been invited to activate your Vanish.link account.
+    Please click on the link below to sign-up (make sure to use the e-mail address this e-mail was sent to).
+    
+    https://vanish.link/signup
+    
+    Thanks,
+    
+    The Vanish Team.`;
+
+    const response = sendEmail(toAddresses, sourceEmailAddress, subject, body);
+    console.log(`DEBUG: Sent email: ${response}`);
 
     return {
       status: 200,
