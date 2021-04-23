@@ -15,7 +15,6 @@ export const main = handler(async (event, context) => {
     console.log(`DEBUG: role: ${data.role}`);
     console.log(`DEBUG: event: ${JSON.stringify(data)}`);
 
-
     /*
       TODO:
 
@@ -27,7 +26,7 @@ export const main = handler(async (event, context) => {
     await putItem(tableName, id, data);
 
     console.log("TODO: SEND EMAIL HERE");
-    const toAddresses = [ data.emailAddress ];
+    const toAddresses = [data.emailAddress];
     const sourceEmailAddress = "noreply@vanish.link";
     const subject = "You've been invited to activate your Vanish.link account";
     const body = `Hi,

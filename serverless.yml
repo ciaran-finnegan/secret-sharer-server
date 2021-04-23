@@ -211,6 +211,14 @@ functions:
           method: post
           cors: true
           authorizer: aws_iam
+  resend-team-invite:
+    handler: resend-team-invite.main
+    events:
+      - http:
+          path: invites/resend
+          method: post
+          cors: true
+          authorizer: aws_iam
 # Create our resources with separate CloudFormation templates
 resources:
   # API Gateway Errors

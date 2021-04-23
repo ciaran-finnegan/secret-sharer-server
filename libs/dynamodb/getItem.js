@@ -13,5 +13,11 @@ export default (table = null, query = {}) => {
       }),
       TableName: table,
     })
-    .promise();
+    .promise()
+    .then((response) => {
+      return AWS.DynamoDB.Converter.unmarshall(response.Item);
+    })
+    .catch((error) => {
+      console.warn(error);
+    });
 };
