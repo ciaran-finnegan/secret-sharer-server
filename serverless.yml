@@ -219,6 +219,22 @@ functions:
           method: post
           cors: true
           authorizer: aws_iam
+  get-invite:
+    handler: get-invite.main
+    events:
+      - http:
+          path: invites/get
+          method: post
+          cors: true
+          authorizer: aws_iam
+  accept-invite:
+    handler: accept-invite.main
+    events:
+      - http:
+          path: invites/accept
+          method: post
+          cors: true
+          authorizer: aws_iam
 # Create our resources with separate CloudFormation templates
 resources:
   # API Gateway Errors
