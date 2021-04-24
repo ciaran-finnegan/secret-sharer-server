@@ -81,24 +81,18 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 19);
+/******/ 	return __webpack_require__(__webpack_require__.s = 20);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = require("aws-sdk");
+__webpack_require__(8).install();
+
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(7).install();
-
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -592,6 +586,12 @@ exports.computeSourceURL = computeSourceURL;
 
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+module.exports = require("aws-sdk");
+
+/***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -603,9 +603,9 @@ exports.computeSourceURL = computeSourceURL;
  */
 
 var base64VLQ = __webpack_require__(4);
-var util = __webpack_require__(2);
+var util = __webpack_require__(1);
 var ArraySet = __webpack_require__(5).ArraySet;
-var MappingList = __webpack_require__(11).MappingList;
+var MappingList = __webpack_require__(12).MappingList;
 
 /**
  * An instance of the SourceMapGenerator represents a source map which is
@@ -1063,7 +1063,7 @@ exports.SourceMapGenerator = SourceMapGenerator;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var base64 = __webpack_require__(10);
+var base64 = __webpack_require__(11);
 
 // A single base 64 digit can contain 6 bits of data. For the base 64 variable
 // length quantities we use in the source map spec, the first bit is the sign,
@@ -1179,7 +1179,7 @@ exports.decode = function base64VLQ_decode(aStr, aIndex, aOutParam) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(2);
+var util = __webpack_require__(1);
 var has = Object.prototype.hasOwnProperty;
 var hasNativeMap = typeof Map !== "undefined";
 
@@ -1303,14 +1303,20 @@ module.exports = require("util");
 
 /***/ }),
 /* 7 */
+/***/ (function(module, exports) {
+
+module.exports = require("crypto");
+
+/***/ }),
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(module) {var SourceMapConsumer = __webpack_require__(9).SourceMapConsumer;
-var path = __webpack_require__(16);
+/* WEBPACK VAR INJECTION */(function(module) {var SourceMapConsumer = __webpack_require__(10).SourceMapConsumer;
+var path = __webpack_require__(17);
 
 var fs;
 try {
-  fs = __webpack_require__(17);
+  fs = __webpack_require__(18);
   if (!fs.existsSync || !fs.readFileSync) {
     // fs doesn't have all methods we need
     fs = null;
@@ -1319,7 +1325,7 @@ try {
   /* nop */
 }
 
-var bufferFrom = __webpack_require__(18);
+var bufferFrom = __webpack_require__(19);
 
 /**
  * Requires a module which is protected against bundler minification.
@@ -1910,10 +1916,10 @@ exports.resetRetrieveHandlers = function() {
   retrieveFile = handlerExec(retrieveFileHandlers);
 }
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(8)(module)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(9)(module)))
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -1941,7 +1947,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -1950,12 +1956,12 @@ module.exports = function(module) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 exports.SourceMapGenerator = __webpack_require__(3).SourceMapGenerator;
-exports.SourceMapConsumer = __webpack_require__(12).SourceMapConsumer;
-exports.SourceNode = __webpack_require__(15).SourceNode;
+exports.SourceMapConsumer = __webpack_require__(13).SourceMapConsumer;
+exports.SourceNode = __webpack_require__(16).SourceNode;
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -2028,7 +2034,7 @@ exports.decode = function (charCode) {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -2038,7 +2044,7 @@ exports.decode = function (charCode) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(2);
+var util = __webpack_require__(1);
 
 /**
  * Determine whether mappingB is after mappingA with respect to generated
@@ -2113,7 +2119,7 @@ exports.MappingList = MappingList;
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -2123,11 +2129,11 @@ exports.MappingList = MappingList;
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(2);
-var binarySearch = __webpack_require__(13);
+var util = __webpack_require__(1);
+var binarySearch = __webpack_require__(14);
 var ArraySet = __webpack_require__(5).ArraySet;
 var base64VLQ = __webpack_require__(4);
-var quickSort = __webpack_require__(14).quickSort;
+var quickSort = __webpack_require__(15).quickSort;
 
 function SourceMapConsumer(aSourceMap, aSourceMapURL) {
   var sourceMap = aSourceMap;
@@ -3264,7 +3270,7 @@ exports.IndexedSourceMapConsumer = IndexedSourceMapConsumer;
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -3381,7 +3387,7 @@ exports.search = function search(aNeedle, aHaystack, aCompare, aBias) {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -3501,7 +3507,7 @@ exports.quickSort = function (ary, comparator) {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -3512,7 +3518,7 @@ exports.quickSort = function (ary, comparator) {
  */
 
 var SourceMapGenerator = __webpack_require__(3).SourceMapGenerator;
-var util = __webpack_require__(2);
+var util = __webpack_require__(1);
 
 // Matches a Windows-style `\r\n` newline or a `\n` newline used by all other
 // operating systems these days (capturing the result).
@@ -3920,19 +3926,19 @@ exports.SourceNode = SourceNode;
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = require("path");
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = require("fs");
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports) {
 
 var toString = Object.prototype.toString
@@ -4007,7 +4013,7 @@ module.exports = bufferFrom
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4018,14 +4024,70 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.d(__webpack_exports__, "main", function() { return /* binding */ main; });
 
 // EXTERNAL MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/node_modules/source-map-support/register.js
-var register = __webpack_require__(1);
+var register = __webpack_require__(0);
 
+// EXTERNAL MODULE: external "crypto"
+var external_crypto_ = __webpack_require__(7);
+var external_crypto_default = /*#__PURE__*/__webpack_require__.n(external_crypto_);
+
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/node_modules/uuid/dist/esm-node/rng.js
+
+function rng() {
+  return external_crypto_default.a.randomBytes(16);
+}
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/node_modules/uuid/dist/esm-node/bytesToUuid.js
+/**
+ * Convert array of 16 byte values to UUID string format of the form:
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ */
+var byteToHex = [];
+
+for (var bytesToUuid_i = 0; bytesToUuid_i < 256; ++bytesToUuid_i) {
+  byteToHex[bytesToUuid_i] = (bytesToUuid_i + 0x100).toString(16).substr(1);
+}
+
+function bytesToUuid(buf, offset) {
+  var i = offset || 0;
+  var bth = byteToHex; // join used to fix memory issue caused by concatenation: https://bugs.chromium.org/p/v8/issues/detail?id=3175#c4
+
+  return [bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]]].join('');
+}
+
+/* harmony default export */ var esm_node_bytesToUuid = (bytesToUuid);
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/node_modules/uuid/dist/esm-node/v4.js
+
+
+
+function v4(options, buf, offset) {
+  var i = buf && offset || 0;
+
+  if (typeof options == 'string') {
+    buf = options === 'binary' ? new Array(16) : null;
+    options = null;
+  }
+
+  options = options || {};
+  var rnds = options.random || (options.rng || rng)(); // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+
+  rnds[6] = rnds[6] & 0x0f | 0x40;
+  rnds[8] = rnds[8] & 0x3f | 0x80; // Copy bytes to buffer, if provided
+
+  if (buf) {
+    for (var ii = 0; ii < 16; ++ii) {
+      buf[i + ii] = rnds[ii];
+    }
+  }
+
+  return buf || esm_node_bytesToUuid(rnds);
+}
+
+/* harmony default export */ var esm_node_v4 = (v4);
 // EXTERNAL MODULE: external "util"
 var external_util_ = __webpack_require__(6);
 var external_util_default = /*#__PURE__*/__webpack_require__.n(external_util_);
 
 // EXTERNAL MODULE: external "aws-sdk"
-var external_aws_sdk_ = __webpack_require__(0);
+var external_aws_sdk_ = __webpack_require__(2);
 var external_aws_sdk_default = /*#__PURE__*/__webpack_require__.n(external_aws_sdk_);
 
 // CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/debug-lib.js
@@ -4092,50 +4154,104 @@ function handler(lambda) {
     };
   };
 }
-// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/dynamodb/index.js
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/dynamodb/putItem.js
 
 
-const dynamodb = new external_aws_sdk_default.a.DynamoDB();
-/* harmony default export */ var libs_dynamodb = (dynamodb);
-// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/dynamodb/getItem.js
-
-
-
-/* harmony default export */ var getItem = ((table = null, query = {}) => {
-  if (Object.keys(query).length === 0 || !table) {
-    throw new Error("Must pass query to get and table to get.");
+/* harmony default export */ var putItem = ((tableName = null, primaryKey = null, tableData = {}) => {
+  if (Object.keys(tableData).length === 0 || !tableName || !primaryKey) {
+    throw new Error("Must pass table, primary key and data to insert.");
   }
 
-  return libs_dynamodb.getItem({
-    Key: external_aws_sdk_default.a.DynamoDB.Converter.marshall({ ...query
-    }),
-    TableName: table
-  }).promise().then(response => {
-    return external_aws_sdk_default.a.DynamoDB.Converter.unmarshall(response.Item);
-  }).catch(error => {
-    console.warn(error);
-  });
+  const dynamoDB = new external_aws_sdk_default.a.DynamoDB.DocumentClient();
+  const invitedAt = Date.now();
+  return dynamoDB.put({
+    Item: {
+      id: primaryKey,
+      invitedAt: invitedAt,
+      ...tableData
+    },
+    TableName: tableName
+  }).promise().then(data => console.log(`DEBUG:: data.Attributes ${data.Attributes}`)).catch(console.error);
 });
-// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/get-invite.js
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/email-lib.js
+
+
+const aws = __webpack_require__(2); // var ses = new aws.SES({ region: "us-west-2" });
+
+
+const ses = new aws.SES();
+async function sendEmail(toAddresses, sourceEmailAddress, subject, body) {
+  if (!toAddresses || !sourceEmailAddress || !subject || !body) {
+    throw new Error("Must pass toAddresses, sourceEmailAddress, subject and body");
+  } // Sample usage
+  // sendEmail([a@b.com], "noreply@foo.com", "Some subject", "Some body");
+
+
+  const params = {
+    Destination: {
+      ToAddresses: toAddresses
+    },
+    Message: {
+      Body: {
+        Text: {
+          Data: body
+        }
+      },
+      Subject: {
+        Data: subject
+      }
+    },
+    Source: sourceEmailAddress
+  };
+  return ses.sendEmail(params).promise().then(response => {
+    console.log(`DEBUG:: Successfully Sent Email: ${response}}`);
+  }).catch(error => {
+    console.error(`ERROR:: Failed to send email: ${error}}`);
+  });
+}
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/send-team-invite.js
+
+// import AWS from "aws-sdk";
+
 
 
 
 const main = handler(async (event, context) => {
   try {
-    // Request body is passed in as a JSON encoded string in 'event.body'
+    const id = esm_node_v4();
     const data = JSON.parse(event.body);
-    const inviteId = data.inviteId;
     const tableName = process.env.invitesTableName;
-    console.log(`DEBUG: Event: ${event}`);
-    console.log(`DEBUG: data: ${data}`);
     console.log(`DEBUG: tableName: ${tableName}`);
-    const invite = await getItem(tableName, {
-      inviteId
-    });
-    console.log(invite);
+    console.log(`DEBUG: teamId: ${data.teamId}`);
+    console.log(`DEBUG: emailAddress: ${data.emailAddress}`);
+    console.log(`DEBUG: role: ${data.role}`);
+    console.log(`DEBUG: event: ${JSON.stringify(data)}`);
+    /*
+      TODO:
+       1. Create an invite in the invites table and get back an ID.
+      2. Send an email to the emailAddress.
+      3. Return.
+    */
+
+    await putItem(tableName, id, data);
+    console.log("TODO: SEND EMAIL HERE");
+    const toAddresses = [data.emailAddress];
+    const sourceEmailAddress = process.env.sendEmailInviteFrom;
+    const subject = "You've been invited to activate your Vanish.link account";
+    const body = `Hi,
+    You have been invited to activate your Vanish.link account.
+    Please click on the link below to sign-up (make sure to use the e-mail address this e-mail was sent to).
+    
+    https://vanish.link/signup
+    
+    Thanks,
+    
+    The Vanish Team.`;
+    const response = sendEmail(toAddresses, sourceEmailAddress, subject, body);
+    console.log(`DEBUG: Sent email: ${response}`);
     return {
-      status: invite ? 200 : 404,
-      invite
+      status: 200,
+      id
     };
   } catch (exception) {
     console.warn(exception);
@@ -4144,4 +4260,4 @@ const main = handler(async (event, context) => {
 
 /***/ })
 /******/ ])));
-//# sourceMappingURL=get-invite.js.map
+//# sourceMappingURL=send-team-invite.js.map

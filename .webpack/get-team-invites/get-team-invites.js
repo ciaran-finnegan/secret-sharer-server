@@ -88,19 +88,6 @@
 /* 0 */
 /***/ (function(module, exports) {
 
-module.exports = require("aws-sdk");
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(7).install();
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports) {
-
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -592,6 +579,19 @@ exports.computeSourceURL = computeSourceURL;
 
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(7).install();
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+module.exports = require("aws-sdk");
+
+/***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -603,7 +603,7 @@ exports.computeSourceURL = computeSourceURL;
  */
 
 var base64VLQ = __webpack_require__(4);
-var util = __webpack_require__(2);
+var util = __webpack_require__(0);
 var ArraySet = __webpack_require__(5).ArraySet;
 var MappingList = __webpack_require__(11).MappingList;
 
@@ -1179,7 +1179,7 @@ exports.decode = function base64VLQ_decode(aStr, aIndex, aOutParam) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(2);
+var util = __webpack_require__(0);
 var has = Object.prototype.hasOwnProperty;
 var hasNativeMap = typeof Map !== "undefined";
 
@@ -2038,7 +2038,7 @@ exports.decode = function (charCode) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(2);
+var util = __webpack_require__(0);
 
 /**
  * Determine whether mappingB is after mappingA with respect to generated
@@ -2123,7 +2123,7 @@ exports.MappingList = MappingList;
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(2);
+var util = __webpack_require__(0);
 var binarySearch = __webpack_require__(13);
 var ArraySet = __webpack_require__(5).ArraySet;
 var base64VLQ = __webpack_require__(4);
@@ -3512,7 +3512,7 @@ exports.quickSort = function (ary, comparator) {
  */
 
 var SourceMapGenerator = __webpack_require__(3).SourceMapGenerator;
-var util = __webpack_require__(2);
+var util = __webpack_require__(0);
 
 // Matches a Windows-style `\r\n` newline or a `\n` newline used by all other
 // operating systems these days (capturing the result).
@@ -4025,7 +4025,7 @@ var external_util_ = __webpack_require__(6);
 var external_util_default = /*#__PURE__*/__webpack_require__.n(external_util_);
 
 // EXTERNAL MODULE: external "aws-sdk"
-var external_aws_sdk_ = __webpack_require__(0);
+var external_aws_sdk_ = __webpack_require__(2);
 var external_aws_sdk_default = /*#__PURE__*/__webpack_require__.n(external_aws_sdk_);
 
 // CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/debug-lib.js
@@ -4092,50 +4092,68 @@ function handler(lambda) {
     };
   };
 }
-// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/dynamodb/index.js
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/dynamodb/queryItems.js
 
+ // import dynamodb from "../dynamodb";
 
-const dynamodb = new external_aws_sdk_default.a.DynamoDB();
-/* harmony default export */ var libs_dynamodb = (dynamodb);
-// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/dynamodb/getItem.js
-
-
-
-/* harmony default export */ var getItem = ((table = null, query = {}) => {
-  if (Object.keys(query).length === 0 || !table) {
+/* harmony default export */ var queryItems = (async (tableName = null, teamId = {}) => {
+  if (teamId.length === 0 || !tableName) {
     throw new Error("Must pass query to get and table to get.");
   }
 
-  return libs_dynamodb.getItem({
-    Key: external_aws_sdk_default.a.DynamoDB.Converter.marshall({ ...query
-    }),
-    TableName: table
-  }).promise().then(response => {
-    return external_aws_sdk_default.a.DynamoDB.Converter.unmarshall(response.Item);
-  }).catch(error => {
-    console.warn(error);
-  });
+  const documentClient = new external_aws_sdk_default.a.DynamoDB.DocumentClient(); // todo - consider abstracting this
+
+  const indexName = "teamId-index"; //  Scan is "scanning" through the whole table looking for elements matching criteria.
+  //  Query is performing a direct lookup to a selected partition based on primary or secondary partition/hash key.
+
+  const {
+    Items
+  } = await documentClient.query({
+    TableName: tableName,
+    IndexName: indexName,
+    "KeyConditionExpression": "#DYNOBASE_teamId = :pkey",
+    "ExpressionAttributeValues": {
+      ":pkey": teamId
+    },
+    "ExpressionAttributeNames": {
+      "#DYNOBASE_teamId": "teamId"
+    },
+    "ScanIndexForward": true,
+    // TODO - Handle this limit via environment variable
+    "Limit": 1000
+  }).promise();
+  console.log(`DEBUG:: Items: ${Items}`);
+  return Items;
 });
-// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/get-invite.js
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/get-team-invites.js
 
 
 
 const main = handler(async (event, context) => {
   try {
     // Request body is passed in as a JSON encoded string in 'event.body'
-    const data = JSON.parse(event.body);
-    const inviteId = data.inviteId;
+    const data = JSON.parse(event.body); // teamId submitted as teamId
+
+    const teamId = data.teamId; // hash submitted by  client
+
     const tableName = process.env.invitesTableName;
     console.log(`DEBUG: Event: ${event}`);
     console.log(`DEBUG: data: ${data}`);
+    console.log(`DEBUG: teamId: ${teamId}`);
     console.log(`DEBUG: tableName: ${tableName}`);
-    const invite = await getItem(tableName, {
-      inviteId
-    });
-    console.log(invite);
+    /*
+      TODO:
+       1. Create an invite in the invites table and get back an ID.
+      2. Send an email to the emailAddress.
+      3. Return.
+    */
+
+    const items = await queryItems(tableName, teamId);
+    console.log("TODO: RETURN ITEMS HERE - ask Ryan how to do this? - nevermind dumbo");
+    console.log("TODO: SEND EMAIL HERE");
     return {
-      status: invite ? 200 : 404,
-      invite
+      status: 200,
+      items
     };
   } catch (exception) {
     console.warn(exception);
@@ -4144,4 +4162,4 @@ const main = handler(async (event, context) => {
 
 /***/ })
 /******/ ])));
-//# sourceMappingURL=get-invite.js.map
+//# sourceMappingURL=get-team-invites.js.map

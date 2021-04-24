@@ -88,19 +88,6 @@
 /* 0 */
 /***/ (function(module, exports) {
 
-module.exports = require("aws-sdk");
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(7).install();
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports) {
-
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -592,6 +579,19 @@ exports.computeSourceURL = computeSourceURL;
 
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
+module.exports = require("aws-sdk");
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(7).install();
+
+
+/***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -603,7 +603,7 @@ exports.computeSourceURL = computeSourceURL;
  */
 
 var base64VLQ = __webpack_require__(4);
-var util = __webpack_require__(2);
+var util = __webpack_require__(0);
 var ArraySet = __webpack_require__(5).ArraySet;
 var MappingList = __webpack_require__(11).MappingList;
 
@@ -1179,7 +1179,7 @@ exports.decode = function base64VLQ_decode(aStr, aIndex, aOutParam) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(2);
+var util = __webpack_require__(0);
 var has = Object.prototype.hasOwnProperty;
 var hasNativeMap = typeof Map !== "undefined";
 
@@ -1299,7 +1299,7 @@ exports.ArraySet = ArraySet;
 /* 6 */
 /***/ (function(module, exports) {
 
-module.exports = require("util");
+module.exports = require("crypto");
 
 /***/ }),
 /* 7 */
@@ -2038,7 +2038,7 @@ exports.decode = function (charCode) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(2);
+var util = __webpack_require__(0);
 
 /**
  * Determine whether mappingB is after mappingA with respect to generated
@@ -2123,7 +2123,7 @@ exports.MappingList = MappingList;
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(2);
+var util = __webpack_require__(0);
 var binarySearch = __webpack_require__(13);
 var ArraySet = __webpack_require__(5).ArraySet;
 var base64VLQ = __webpack_require__(4);
@@ -3512,7 +3512,7 @@ exports.quickSort = function (ary, comparator) {
  */
 
 var SourceMapGenerator = __webpack_require__(3).SourceMapGenerator;
-var util = __webpack_require__(2);
+var util = __webpack_require__(0);
 
 // Matches a Windows-style `\r\n` newline or a `\n` newline used by all other
 // operating systems these days (capturing the result).
@@ -4018,130 +4018,202 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.d(__webpack_exports__, "main", function() { return /* binding */ main; });
 
 // EXTERNAL MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/node_modules/source-map-support/register.js
-var register = __webpack_require__(1);
+var register = __webpack_require__(2);
 
-// EXTERNAL MODULE: external "util"
-var external_util_ = __webpack_require__(6);
-var external_util_default = /*#__PURE__*/__webpack_require__.n(external_util_);
+// EXTERNAL MODULE: external "crypto"
+var external_crypto_ = __webpack_require__(6);
+var external_crypto_default = /*#__PURE__*/__webpack_require__.n(external_crypto_);
 
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/node_modules/uuid/dist/esm-node/rng.js
+
+function rng() {
+  return external_crypto_default.a.randomBytes(16);
+}
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/node_modules/uuid/dist/esm-node/bytesToUuid.js
+/**
+ * Convert array of 16 byte values to UUID string format of the form:
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ */
+var byteToHex = [];
+
+for (var bytesToUuid_i = 0; bytesToUuid_i < 256; ++bytesToUuid_i) {
+  byteToHex[bytesToUuid_i] = (bytesToUuid_i + 0x100).toString(16).substr(1);
+}
+
+function bytesToUuid(buf, offset) {
+  var i = offset || 0;
+  var bth = byteToHex; // join used to fix memory issue caused by concatenation: https://bugs.chromium.org/p/v8/issues/detail?id=3175#c4
+
+  return [bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]]].join('');
+}
+
+/* harmony default export */ var esm_node_bytesToUuid = (bytesToUuid);
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/node_modules/uuid/dist/esm-node/v4.js
+
+
+
+function v4(options, buf, offset) {
+  var i = buf && offset || 0;
+
+  if (typeof options == 'string') {
+    buf = options === 'binary' ? new Array(16) : null;
+    options = null;
+  }
+
+  options = options || {};
+  var rnds = options.random || (options.rng || rng)(); // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+
+  rnds[6] = rnds[6] & 0x0f | 0x40;
+  rnds[8] = rnds[8] & 0x3f | 0x80; // Copy bytes to buffer, if provided
+
+  if (buf) {
+    for (var ii = 0; ii < 16; ++ii) {
+      buf[i + ii] = rnds[ii];
+    }
+  }
+
+  return buf || esm_node_bytesToUuid(rnds);
+}
+
+/* harmony default export */ var esm_node_v4 = (v4);
 // EXTERNAL MODULE: external "aws-sdk"
-var external_aws_sdk_ = __webpack_require__(0);
+var external_aws_sdk_ = __webpack_require__(1);
 var external_aws_sdk_default = /*#__PURE__*/__webpack_require__.n(external_aws_sdk_);
 
-// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/debug-lib.js
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/getCongitoUser.js
 
 
+// import AWS from "aws-sdk";
+// import * as AmazonCognitoIdentity from "amazon-cognito-identity-js";
+//ciaran - testing
+const AWS = __webpack_require__(1);
 
-let logs; // Log AWS SDK calls
-
-external_aws_sdk_default.a.config.logger = {
-  log: debug
-};
-function debug() {
-  logs.push({
-    date: new Date(),
-    string: external_util_default.a.format.apply(null, arguments)
-  });
-}
-function init(event, context) {
-  logs = []; // Log API event
-
-  debug("API event", {
-    body: event.body,
-    pathParameters: event.pathParameters,
-    queryStringParameters: event.queryStringParameters
-  });
-}
-function flush(e) {
-  logs.forEach(({
-    date,
-    string
-  }) => console.debug(date, string));
-  console.error(e);
-}
-// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/handler-lib.js
-
-
-function handler(lambda) {
-  return async function (event, context) {
-    let body, statusCode; // Start debugger
-
-    init(event, context);
-
-    try {
-      // Run the Lambda
-      body = await lambda(event, context);
-      statusCode = 200;
-    } catch (e) {
-      // Print debug messages
-      flush(e);
-      body = {
-        error: e.message
-      };
-      statusCode = 500;
-    } // Return HTTP response
-
-
-    return {
-      statusCode,
-      body: JSON.stringify(body),
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Credentials": true
-      }
-    };
+const cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider({
+  apiVersion: "2016-04-18"
+});
+/* harmony default export */ var getCongitoUser = (async userId => {
+  // console.log(process.env);
+  var params = {
+    UserPoolId: process.env.COGNITO_USER_POOL_ID,
+    Username: userId
   };
-}
-// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/dynamodb/index.js
+  console.log("DEBUG:: Cognito params set to");
+  console.log(params); // Retrieve User Object from Cognito User Pool
+
+  let user = await cognitoidentityserviceprovider.adminGetUser(params).promise(); //
+  //
+  // Ask Ryan how to do error handling for this
+  //
+  //
+
+  console.log("DEBUG:: User's email is: ");
+  console.log(user.UserAttributes[2].Value);
+  return user;
+});
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/create.js
+
+// import handler from "./libs/handler-lib";
 
 
-const dynamodb = new external_aws_sdk_default.a.DynamoDB();
-/* harmony default export */ var libs_dynamodb = (dynamodb);
-// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/dynamodb/getItem.js
 
+const dynamoDb = new external_aws_sdk_default.a.DynamoDB.DocumentClient();
+async function main(event, context) {
+  const id = esm_node_v4(); // URL for web form to retrieve secret
+  // const getSecretURL = process.env.GETSECRET_URL;
+  // Request body is passed in as a JSON encoded string in 'event.body'
 
+  const data = JSON.parse(event.body);
+  const cipher = data.cipher;
+  const hint = data.hint;
+  const hash = data.hash;
+  const createdAt = Date.now(); // Validate expiry in hours and force maximum permitted expiry to 72hrs
+  // A scheduled lambda function will delete expired ciphers
 
-/* harmony default export */ var getItem = ((table = null, query = {}) => {
-  if (Object.keys(query).length === 0 || !table) {
-    throw new Error("Must pass query to get and table to get.");
+  function validateExpiresAt(hours) {
+    if (hours <= 72 && hours.isInteger) {
+      let expiresAt = Date.now() + hours * 60 * 60 * 1000;
+      return expiresAt;
+    } else {
+      let expiresAt = Date.now() + 72 * 60 * 60 * 1000;
+      return expiresAt;
+    }
   }
 
-  return libs_dynamodb.getItem({
-    Key: external_aws_sdk_default.a.DynamoDB.Converter.marshall({ ...query
-    }),
-    TableName: table
-  }).promise().then(response => {
-    return external_aws_sdk_default.a.DynamoDB.Converter.unmarshall(response.Item);
-  }).catch(error => {
-    console.warn(error);
-  });
-});
-// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/get-invite.js
+  const expiresAt = validateExpiresAt(data.expiresAt); // Get the callers Cognito User Name
 
+  const authProvider = event.requestContext.identity.cognitoAuthenticationProvider;
+  const parts = authProvider.split(":");
+  const userPoolUsername = parts[parts.length - 1];
+  const cognitoUser = await getCongitoUser(userPoolUsername);
+  console.log(`DEBUG: CognitoUsername: ${cognitoUser.Username}`); // Create a DynamoDB item
+  // - 'id': a unique uuid
+  // - 'createdBy': the cognitoUser.Username from the users table
+  // - 'cipher' contains the cipher of the secret encrypted with a passphrase
+  // - 'hash' hash of passphrase
+  // - 'hint' optional hint for the passphrase
+  // - 'expiresAt' date/time to delete the item
+  // - 'content': parsed from request body, not yet implemented
+  // - 'attachment': parsed from request body, not yet implemented
+  // - 'createdAt': current Unix timestamp
 
+  const params = {
+    TableName: process.env.tableName,
+    Item: {
+      id: id,
+      createdBy: cognitoUser.Username,
+      createdAt: createdAt,
+      expiresAt: expiresAt,
+      cipher: cipher,
+      hint: hint,
+      hash: hash,
+      attachment: data.attachment,
+      retrievedAt: 0,
+      retrieved: false,
+      failedRetrievals: 0,
+      lastFailedRetrievalAt: 0
+    }
+  }; // debugging
 
-const main = handler(async (event, context) => {
+  console.log(`id:  ${id}`);
+  console.log(`createdBy: ${cognitoUser.Username}`);
+  console.log(`cipher:  ${cipher}`);
+  console.log(`hint:  ${hint}`);
+  console.log(`hash:  ${hash}`);
+  console.log(`createdAt:  ${createdAt}`);
+  console.log(`expiresAt:  ${expiresAt}`);
+
   try {
-    // Request body is passed in as a JSON encoded string in 'event.body'
-    const data = JSON.parse(event.body);
-    const inviteId = data.inviteId;
-    const tableName = process.env.invitesTableName;
-    console.log(`DEBUG: Event: ${event}`);
-    console.log(`DEBUG: data: ${data}`);
-    console.log(`DEBUG: tableName: ${tableName}`);
-    const invite = await getItem(tableName, {
-      inviteId
-    });
-    console.log(invite);
-    return {
-      status: invite ? 200 : 404,
-      invite
+    await dynamoDb.put(params).promise(); // Set response headers to enable CORS (Cross-Origin Resource Sharing)
+
+    const headers = {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Credentials": true
     };
-  } catch (exception) {
-    console.warn(exception);
+    return {
+      statusCode: 200,
+      headers: headers,
+      body: JSON.stringify({
+        status: true,
+        id: id,
+        message: "Secret encrypted and stored successfully."
+      })
+    };
+  } catch (e) {
+    const headers = {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Credentials": true
+    };
+    return {
+      statusCode: 500,
+      headers: headers,
+      body: JSON.stringify({
+        status: false,
+        message: "Sorry that didn't work, please try again."
+      })
+    };
   }
-});
+}
 
 /***/ })
 /******/ ])));
-//# sourceMappingURL=get-invite.js.map
+//# sourceMappingURL=create.js.map

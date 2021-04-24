@@ -81,24 +81,11 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 19);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
-
-module.exports = require("aws-sdk");
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(7).install();
-
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -592,7 +579,7 @@ exports.computeSourceURL = computeSourceURL;
 
 
 /***/ }),
-/* 3 */
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -602,9 +589,9 @@ exports.computeSourceURL = computeSourceURL;
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var base64VLQ = __webpack_require__(4);
-var util = __webpack_require__(2);
-var ArraySet = __webpack_require__(5).ArraySet;
+var base64VLQ = __webpack_require__(2);
+var util = __webpack_require__(0);
+var ArraySet = __webpack_require__(3).ArraySet;
 var MappingList = __webpack_require__(11).MappingList;
 
 /**
@@ -1023,7 +1010,7 @@ exports.SourceMapGenerator = SourceMapGenerator;
 
 
 /***/ }),
-/* 4 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -1169,7 +1156,7 @@ exports.decode = function base64VLQ_decode(aStr, aIndex, aOutParam) {
 
 
 /***/ }),
-/* 5 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -1179,7 +1166,7 @@ exports.decode = function base64VLQ_decode(aStr, aIndex, aOutParam) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(2);
+var util = __webpack_require__(0);
 var has = Object.prototype.hasOwnProperty;
 var hasNativeMap = typeof Map !== "undefined";
 
@@ -1296,10 +1283,233 @@ exports.ArraySet = ArraySet;
 
 
 /***/ }),
-/* 6 */
+/* 4 */
 /***/ (function(module, exports) {
 
-module.exports = require("util");
+module.exports = require("aws-sdk");
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "main", function() { return main; });
+/* harmony import */ var source_map_support_register__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
+/* harmony import */ var source_map_support_register__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(source_map_support_register__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var aws_sdk__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
+/* harmony import */ var aws_sdk__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(aws_sdk__WEBPACK_IMPORTED_MODULE_1__);
+
+
+const dynamoDb = new aws_sdk__WEBPACK_IMPORTED_MODULE_1___default.a.DynamoDB.DocumentClient();
+function main(event, context, callback) {
+  // Request body is passed in as a JSON encoded string in 'event.body'
+  const data = JSON.parse(event.body); // secretID submitted as path query id=
+
+  const id = data.id; // hash submitted by  client
+
+  const clientHash = data.hash;
+  const params = {
+    TableName: process.env.tableName,
+    // 'Key' defines the key of the item to be retrieved
+    Key: {
+      id: id
+    }
+  };
+  dynamoDb.get(params, (error, data) => {
+    // Set response headers to enable CORS (Cross-Origin Resource Sharing)
+    console.log(`debug: error: ${error}`);
+    console.log(`debug: data.Item: ${data.Item}`);
+    const headers = {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Credentials": true
+    };
+
+    if (error) {
+      const response = {
+        statusCode: 202,
+        headers: headers,
+        body: JSON.stringify({
+          status: false,
+          message: "We are unable to retrieve this secret."
+        })
+      };
+      console.error(`Error (if error) retrieving item from DB: \n`, error);
+      callback(null, response);
+      return;
+    } // Return error if Item has expired
+    //    console.log(`debug: error: ${error}`);
+    //    console.log(`debug: data: ${error}`);
+    // If a nonexistent id is provided data and error are returned as null
+    // Needs further investigation
+    // Refactor using async/await/try/catch to handle errors properly
+    else if (!data.Item.id) {
+        const response = {
+          statusCode: 202,
+          headers: headers,
+          body: JSON.stringify({
+            status: false,
+            message: "We are unable to retrieve this secret."
+          })
+        };
+        console.error(`Error retrieving item (id) from DB: \n`, id);
+        callback(null, response);
+        return;
+      } else {
+        const now = Date.now();
+        const expiresAt = data.Item.expiresAt;
+
+        if (now > expiresAt) {
+          const response = {
+            statusCode: 202,
+            headers: headers,
+            body: JSON.stringify({
+              status: false,
+              message: "This secret has expired."
+            })
+          };
+          console.error(`Error, secret has expired: `, id);
+          callback(null, response);
+        }
+      } // Return error if Item has already been retrieved
+
+
+    if (data.Item.retrieved) {
+      const response = {
+        statusCode: 202,
+        headers: headers,
+        body: JSON.stringify({
+          status: false,
+          message: "This secret has already been retrieved."
+        })
+      };
+      console.error(`Error, secret has expired: `, id);
+      callback(null, response);
+    }
+
+    const cipher = data.Item.cipher;
+    const createdAt = data.Item.createdAt;
+    const attachment = data.Item.attachment;
+    const hash = data.Item.hash;
+    const hint = data.Item.hint;
+    const failedRetrievals = data.Item.failedRetrievals;
+    console.log(`failedRetrievals: ${failedRetrievals}`);
+    console.log(`failedRetrievals type: ${typeof failedRetrievals}`);
+    console.log(`storedHash: ${hash}`);
+    console.log(`clientHash: ${clientHash}`);
+    console.log(`id: ${id}`); // todo if retrieved is true return an error
+    // message: Error, this secret has already been retrieved
+    // todo if expired return an error
+    // todo if failed retrieval attempts >2 and lastFailedRetrievalAt is less than 1 hour ago return an error
+    // if passphrase hashes don't match return an error
+
+    if (hash !== clientHash) {
+      // Increment failedRetrievaals counter, update lastFailedRetrievalAt data and send error to client
+      let incrementFailedRetrievals = 1;
+
+      if (failedRetrievals) {
+        incrementFailedRetrievals = failedRetrievals + 1;
+      }
+
+      const now = Date.now();
+      console.log(typeof incrementfailedRetrievals);
+      console.log(typeof now);
+      console.log(typeof id);
+      const expiresAt = data.Item.expiresAt;
+      const x = {
+        TableName: process.env.tableName,
+        // 'Key' defines the key of the item to be retrieved
+        Key: {
+          id: id
+        },
+        Item: {
+          id: id,
+          cipher: cipher,
+          hint: hint,
+          hash: hash,
+          attachment: attachment,
+          createdAt: createdAt,
+          expiresAt: expiresAt,
+          retrievedAt: 0,
+          retrieved: false,
+          failedRetrievals: incrementFailedRetrievals,
+          lastFailedRetrievalAt: now
+        }
+      };
+      dynamoDb.put(x, function (err, data) {
+        if (err) {
+          console.error(`Error, failed to update Item: `, err);
+        } else {
+          const response = {
+            statusCode: 202,
+            headers: headers,
+            body: JSON.stringify({
+              status: false,
+              message: "Passphrase not accepted"
+            })
+          };
+          console.error(`Error, invalid passphrase hash submitted by client: `, clientHash);
+          callback(null, response);
+        }
+      });
+    } else {
+      const retrievedAt = Date.now();
+      const retrieved = true;
+      const expiresAt = data.Item.expiresAt; // Delete cipher, hash and hint, set retrieved = true and retrievedAt
+
+      const p = {
+        TableName: process.env.tableName,
+        // 'Key' defines the key of the item to be retrieved
+        Key: {
+          id: id
+        },
+        Item: {
+          id: id,
+          cipher: "DELETED",
+          createdAt: createdAt,
+          expiresAt: expiresAt,
+          retrievedAt: retrievedAt,
+          retrieved: retrieved,
+          hash: "DELETED",
+          attachment: attachment,
+          hint: "DELETED"
+        }
+      };
+      dynamoDb.put(p, function (err, data) {
+        if (err) {
+          const response = {
+            statusCode: 202,
+            headers: headers,
+            body: JSON.stringify({
+              status: false,
+              message: "An internal error occurred"
+            })
+          };
+          console.error(`Error, failed to delete cipher and  hash: `, err);
+          callback(null, response);
+        } else {
+          const response = {
+            statusCode: 200,
+            headers: headers,
+            body: JSON.stringify({
+              status: true,
+              cipher: cipher,
+              message: "Secret retrieved successfully, encrypted data have been permanently deleted from our servers"
+            })
+          };
+          callback(null, response);
+        }
+      });
+    }
+  });
+}
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(7).install();
+
 
 /***/ }),
 /* 7 */
@@ -1949,7 +2159,7 @@ module.exports = function(module) {
  * Licensed under the New BSD license. See LICENSE.txt or:
  * http://opensource.org/licenses/BSD-3-Clause
  */
-exports.SourceMapGenerator = __webpack_require__(3).SourceMapGenerator;
+exports.SourceMapGenerator = __webpack_require__(1).SourceMapGenerator;
 exports.SourceMapConsumer = __webpack_require__(12).SourceMapConsumer;
 exports.SourceNode = __webpack_require__(15).SourceNode;
 
@@ -2038,7 +2248,7 @@ exports.decode = function (charCode) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(2);
+var util = __webpack_require__(0);
 
 /**
  * Determine whether mappingB is after mappingA with respect to generated
@@ -2123,10 +2333,10 @@ exports.MappingList = MappingList;
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(2);
+var util = __webpack_require__(0);
 var binarySearch = __webpack_require__(13);
-var ArraySet = __webpack_require__(5).ArraySet;
-var base64VLQ = __webpack_require__(4);
+var ArraySet = __webpack_require__(3).ArraySet;
+var base64VLQ = __webpack_require__(2);
 var quickSort = __webpack_require__(14).quickSort;
 
 function SourceMapConsumer(aSourceMap, aSourceMapURL) {
@@ -3511,8 +3721,8 @@ exports.quickSort = function (ary, comparator) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var SourceMapGenerator = __webpack_require__(3).SourceMapGenerator;
-var util = __webpack_require__(2);
+var SourceMapGenerator = __webpack_require__(1).SourceMapGenerator;
+var util = __webpack_require__(0);
 
 // Matches a Windows-style `\r\n` newline or a `\n` newline used by all other
 // operating systems these days (capturing the result).
@@ -4006,142 +4216,6 @@ function bufferFrom (value, encodingOrOffset, length) {
 module.exports = bufferFrom
 
 
-/***/ }),
-/* 19 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-// ESM COMPAT FLAG
-__webpack_require__.r(__webpack_exports__);
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, "main", function() { return /* binding */ main; });
-
-// EXTERNAL MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/node_modules/source-map-support/register.js
-var register = __webpack_require__(1);
-
-// EXTERNAL MODULE: external "util"
-var external_util_ = __webpack_require__(6);
-var external_util_default = /*#__PURE__*/__webpack_require__.n(external_util_);
-
-// EXTERNAL MODULE: external "aws-sdk"
-var external_aws_sdk_ = __webpack_require__(0);
-var external_aws_sdk_default = /*#__PURE__*/__webpack_require__.n(external_aws_sdk_);
-
-// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/debug-lib.js
-
-
-
-let logs; // Log AWS SDK calls
-
-external_aws_sdk_default.a.config.logger = {
-  log: debug
-};
-function debug() {
-  logs.push({
-    date: new Date(),
-    string: external_util_default.a.format.apply(null, arguments)
-  });
-}
-function init(event, context) {
-  logs = []; // Log API event
-
-  debug("API event", {
-    body: event.body,
-    pathParameters: event.pathParameters,
-    queryStringParameters: event.queryStringParameters
-  });
-}
-function flush(e) {
-  logs.forEach(({
-    date,
-    string
-  }) => console.debug(date, string));
-  console.error(e);
-}
-// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/handler-lib.js
-
-
-function handler(lambda) {
-  return async function (event, context) {
-    let body, statusCode; // Start debugger
-
-    init(event, context);
-
-    try {
-      // Run the Lambda
-      body = await lambda(event, context);
-      statusCode = 200;
-    } catch (e) {
-      // Print debug messages
-      flush(e);
-      body = {
-        error: e.message
-      };
-      statusCode = 500;
-    } // Return HTTP response
-
-
-    return {
-      statusCode,
-      body: JSON.stringify(body),
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Credentials": true
-      }
-    };
-  };
-}
-// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/dynamodb/index.js
-
-
-const dynamodb = new external_aws_sdk_default.a.DynamoDB();
-/* harmony default export */ var libs_dynamodb = (dynamodb);
-// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/dynamodb/getItem.js
-
-
-
-/* harmony default export */ var getItem = ((table = null, query = {}) => {
-  if (Object.keys(query).length === 0 || !table) {
-    throw new Error("Must pass query to get and table to get.");
-  }
-
-  return libs_dynamodb.getItem({
-    Key: external_aws_sdk_default.a.DynamoDB.Converter.marshall({ ...query
-    }),
-    TableName: table
-  }).promise().then(response => {
-    return external_aws_sdk_default.a.DynamoDB.Converter.unmarshall(response.Item);
-  }).catch(error => {
-    console.warn(error);
-  });
-});
-// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/get-invite.js
-
-
-
-const main = handler(async (event, context) => {
-  try {
-    // Request body is passed in as a JSON encoded string in 'event.body'
-    const data = JSON.parse(event.body);
-    const inviteId = data.inviteId;
-    const tableName = process.env.invitesTableName;
-    console.log(`DEBUG: Event: ${event}`);
-    console.log(`DEBUG: data: ${data}`);
-    console.log(`DEBUG: tableName: ${tableName}`);
-    const invite = await getItem(tableName, {
-      inviteId
-    });
-    console.log(invite);
-    return {
-      status: invite ? 200 : 404,
-      invite
-    };
-  } catch (exception) {
-    console.warn(exception);
-  }
-});
-
 /***/ })
 /******/ ])));
-//# sourceMappingURL=get-invite.js.map
+//# sourceMappingURL=get.js.map

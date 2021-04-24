@@ -4020,13 +4020,13 @@ __webpack_require__.d(__webpack_exports__, "main", function() { return /* bindin
 // EXTERNAL MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/node_modules/source-map-support/register.js
 var register = __webpack_require__(1);
 
-// EXTERNAL MODULE: external "util"
-var external_util_ = __webpack_require__(6);
-var external_util_default = /*#__PURE__*/__webpack_require__.n(external_util_);
-
 // EXTERNAL MODULE: external "aws-sdk"
 var external_aws_sdk_ = __webpack_require__(0);
 var external_aws_sdk_default = /*#__PURE__*/__webpack_require__.n(external_aws_sdk_);
+
+// EXTERNAL MODULE: external "util"
+var external_util_ = __webpack_require__(6);
+var external_util_default = /*#__PURE__*/__webpack_require__.n(external_util_);
 
 // CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/debug-lib.js
 
@@ -4092,50 +4092,174 @@ function handler(lambda) {
     };
   };
 }
-// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/dynamodb/index.js
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/getCongitoUser.js
 
 
-const dynamodb = new external_aws_sdk_default.a.DynamoDB();
-/* harmony default export */ var libs_dynamodb = (dynamodb);
-// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/dynamodb/getItem.js
+// import AWS from "aws-sdk";
+// import * as AmazonCognitoIdentity from "amazon-cognito-identity-js";
+//ciaran - testing
+const AWS = __webpack_require__(0);
 
-
-
-/* harmony default export */ var getItem = ((table = null, query = {}) => {
-  if (Object.keys(query).length === 0 || !table) {
-    throw new Error("Must pass query to get and table to get.");
-  }
-
-  return libs_dynamodb.getItem({
-    Key: external_aws_sdk_default.a.DynamoDB.Converter.marshall({ ...query
-    }),
-    TableName: table
-  }).promise().then(response => {
-    return external_aws_sdk_default.a.DynamoDB.Converter.unmarshall(response.Item);
-  }).catch(error => {
-    console.warn(error);
-  });
+const cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider({
+  apiVersion: "2016-04-18"
 });
-// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/get-invite.js
+/* harmony default export */ var getCongitoUser = (async userId => {
+  // console.log(process.env);
+  var params = {
+    UserPoolId: process.env.COGNITO_USER_POOL_ID,
+    Username: userId
+  };
+  console.log("DEBUG:: Cognito params set to");
+  console.log(params); // Retrieve User Object from Cognito User Pool
+
+  let user = await cognitoidentityserviceprovider.adminGetUser(params).promise(); //
+  //
+  // Ask Ryan how to do error handling for this
+  //
+  //
+
+  console.log("DEBUG:: User's email is: ");
+  console.log(user.UserAttributes[2].Value);
+  return user;
+});
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/getRequestUser.js
+
+
+
+/* harmony default export */ var getRequestUser = (async (requestContext = {}) => {
+  console.log({
+    requestContext
+  });
+  const authProvider = requestContext.identity.cognitoAuthenticationProvider;
+  const parts = authProvider.split(":");
+  const userPoolUsername = parts[parts.length - 1];
+  const cognitoUser = await getCongitoUser(userPoolUsername);
+  const cognitoUserEmail = cognitoUser.UserAttributes[2].Value;
+  const documentClient = new external_aws_sdk_default.a.DynamoDB.DocumentClient();
+  console.log({
+    cognitoUser
+  });
+  const {
+    Items
+  } = await documentClient.scan({
+    TableName: process.env.usersTableName,
+    ScanIndexForward: true,
+    FilterExpression: "#DYNOBASE_customer_email = :customer_email",
+    ExpressionAttributeNames: {
+      "#DYNOBASE_customer_email": "customer_email"
+    },
+    ExpressionAttributeValues: {
+      ":customer_email": cognitoUserEmail
+    }
+  }).promise();
+  console.log(JSON.stringify(Items, null, 2)); // Ciaran - not sure what we are trying to achieve here?
+  // Ask Ryan to explain what this is doing
+  // Commenting out for now and returning user object below
+  // won't contain a Stripe e-mail or Customer ID until a checkoutsession has completed
+  // return Items && Items.find((item) => item.email === cognitoUserEmail);
+
+  const user = {
+    cognitoUser: cognitoUser,
+    cognitoUserEmail: cognitoUserEmail,
+    stripeCurrentPlanNickName: Items[0].stripeCurrentPlanNickName,
+    stripeSubscriptionId: Items[0].stripeSubscriptionId,
+    stripeSubscriptionStatus: Items[0].stripeSubscriptionStatus,
+    stripeCustomerEmail: Items[0].customer_email,
+    // should match cognitoUserEmail, TODO set after Stripe customer creation
+    stripeSubscriptionCurrent_period_end: Items[0].stripeSubscriptionCurrent_period_end,
+    stripeProductId: Items[0].productId,
+    stripeSubscriptionItem: Items[0].stripeSubscriptionItem,
+    stripePriceId: Items[0].priceId,
+    stripeCustomerId: Items[0].customerId
+  };
+  console.log(`DEBUG: User Object: ${user}`);
+  return user;
+});
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/libs/plans.js
+
+/* harmony default export */ var plans = ([{
+  order: 0,
+  name: "Free",
+  priceId: process.env.STRIPE_FREE_SUBSCRIPTION_PRICE_ID,
+  maxSecrets: process.env.STRIPE_FREE_MAX_MONTHLY_SECRETS ? parseInt(process.env.STRIPE_FREE_MAX_MONTHLY_SECRETS, 10) : 0
+}, {
+  order: 1,
+  name: "Solo Monthly",
+  priceId: process.env.STRIPE_SOLO_SUBSCRIPTION_PRICE_ID,
+  maxSecrets: process.env.STRIPE_SOLO_MAX_MONTHLY_SECRETS ? parseInt(process.env.STRIPE_SOLO_MAX_MONTHLY_SECRETS, 10) : 0
+}, {
+  order: 2,
+  name: "Pro Monthly",
+  priceId: process.env.STRIPE_PRO_SUBSCRIPTION_PRICE_ID,
+  maxSecrets: process.env.STRIPE_PRO_MAX_MONTHLY_SECRETS ? parseInt(process.env.STRIPE_PRO_MAX_MONTHLY_SECRETS, 10) : 0
+}]);
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/get-subscription-status.js
+
+// import AWS from "aws-sdk";
+
+
 
 
 
 const main = handler(async (event, context) => {
   try {
-    // Request body is passed in as a JSON encoded string in 'event.body'
-    const data = JSON.parse(event.body);
-    const inviteId = data.inviteId;
-    const tableName = process.env.invitesTableName;
-    console.log(`DEBUG: Event: ${event}`);
-    console.log(`DEBUG: data: ${data}`);
-    console.log(`DEBUG: tableName: ${tableName}`);
-    const invite = await getItem(tableName, {
-      inviteId
+    // NOTE: See notes file at root of project for details on how this works.
+    console.log(JSON.stringify(event, null, 2));
+    const authProvider = event.requestContext.identity.cognitoAuthenticationProvider;
+    const parts = authProvider.split(":");
+    const userPoolUsername = parts[parts.length - 1];
+    const cognitoUser = await getCongitoUser(userPoolUsername);
+    console.log(`DEBUG: CognitoUsername: ${cognitoUser.Username}`);
+    const date = new Date();
+    const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    console.log(`DEBUG: firstDayOfMonth: ${firstDayOfMonth.getTime()} `);
+    const documentClient = new external_aws_sdk_default.a.DynamoDB.DocumentClient();
+    const {
+      Count
+    } = await documentClient.query({
+      TableName: process.env.tableName,
+      IndexName: "createdBy-index",
+      KeyConditionExpression: "#DYNOBASE_createdBy = :pkey",
+      ExpressionAttributeValues: {
+        ":pkey": cognitoUser.Username,
+        ":createdAt": firstDayOfMonth.getTime()
+      },
+      ExpressionAttributeNames: {
+        "#DYNOBASE_createdBy": "createdBy",
+        "#DYNOBASE_createdAt": "createdAt"
+      },
+      ScanIndexForward: true,
+      Limit: 100,
+      FilterExpression: "#DYNOBASE_createdAt >= :createdAt"
+    }).promise();
+    console.log(`DEBUG: Count: ${Count} `);
+    const user = await getRequestUser(event.requestContext);
+    console.log({
+      user
     });
-    console.log(invite);
+    const stripeCurrentPlanNickName = user.stripeCurrentPlanNickName;
+    const stripeSubscriptionStatus = user.stripeSubscriptionStatus;
+    const stripeSubscriptionCurrent_period_end = user.stripeSubscriptionCurrent_period_end; // TODO:
+
+    const stripePriceId = user.stripePriceId;
+    const currentPlan = plans && plans.find(plan => plan && plan.priceId === stripePriceId);
+    const maxSecrets = currentPlan && currentPlan.maxSecrets; // TODO:
+
+    console.log({
+      currentPlan,
+      stripePriceId,
+      plans: plans,
+      maxSecrets
+    });
     return {
-      status: invite ? 200 : 404,
-      invite
+      plans: plans,
+      stripeCurrentPlanNickName: stripeCurrentPlanNickName,
+      // TODO: Update Plan names on client to match Stripe ['Free', 'Solo Monthly', 'Pro Monthly']
+      stripeSubscriptionStatus: stripeSubscriptionStatus,
+      stripeSubscriptionCurrent_period_end: stripeSubscriptionCurrent_period_end,
+      seretsCreatedThisMonth: Count,
+      maxSecrets,
+      secretsAvailable: maxSecrets - Count
     };
   } catch (exception) {
     console.warn(exception);
@@ -4144,4 +4268,4 @@ const main = handler(async (event, context) => {
 
 /***/ })
 /******/ ])));
-//# sourceMappingURL=get-invite.js.map
+//# sourceMappingURL=get-subscription-status.js.map

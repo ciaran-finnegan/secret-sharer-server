@@ -4116,7 +4116,7 @@ const dynamodb = new external_aws_sdk_default.a.DynamoDB();
     console.warn(error);
   });
 });
-// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/get-invite.js
+// CONCATENATED MODULE: /Users/cfinnegan/Documents/dev/secret-sharer-server/accept-invite.js
 
 
 
@@ -4132,6 +4132,9 @@ const main = handler(async (event, context) => {
     const invite = await getItem(tableName, {
       inviteId
     });
+
+    if (invite) {}
+
     console.log(invite);
     return {
       status: invite ? 200 : 404,
@@ -4144,4 +4147,4 @@ const main = handler(async (event, context) => {
 
 /***/ })
 /******/ ])));
-//# sourceMappingURL=get-invite.js.map
+//# sourceMappingURL=accept-invite.js.map
