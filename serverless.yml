@@ -53,6 +53,7 @@ provider:
     COGNITO_USER_POOL_ID: ${env:COGNITO_USER_POOL_ID}
     COGNITO_APP_CLIENT_ID: ${env:COGNITO_APP_CLIENT_ID}
     COGNITO_IDENTITY_POOL_ID: ${env:COGNITO_IDENTITY_POOL_ID}
+    sendEmailInviteFrom: ${SEND_INVITE_EMAIL_FROM}
     SLS_DEBUG: ${env:SLS_DEBUG}
     
   iamRoleStatements:

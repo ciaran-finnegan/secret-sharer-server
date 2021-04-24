@@ -27,7 +27,7 @@ export const main = handler(async (event, context) => {
 
     console.log("TODO: SEND EMAIL HERE");
     const toAddresses = [data.emailAddress];
-    const sourceEmailAddress = "noreply@vanish.link";
+    const sourceEmailAddress = process.env.sendEmailInviteFrom;
     const subject = "You've been invited to activate your Vanish.link account";
     const body = `Hi,
     You have been invited to activate your Vanish.link account.
