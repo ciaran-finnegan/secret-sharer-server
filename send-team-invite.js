@@ -25,8 +25,7 @@ export const main = handler(async (event, context) => {
 
     await putItem(tableName, id, data);
 
-    console.log("TODO: SEND EMAIL HERE");
-    const toAddresses = [data.emailAddress];
+    const toAddress = [data.emailAddress];
     const sourceEmailAddress = process.env.sendEmailInviteFrom;
     const subject = "You've been invited to activate your Vanish.link account";
     const body = `Hi,
@@ -39,8 +38,13 @@ export const main = handler(async (event, context) => {
     
     The Vanish Team.`;
 
-    const response = sendEmail(toAddresses, sourceEmailAddress, subject, body);
-    console.log(`DEBUG: Sent email: ${response}`);
+    console.log(`DEBUG: toAddress: ${toAddress}`);
+    console.log(`DEBUG: sourceEmailAddress: ${sourceEmailAddress}`);
+    console.log(`DEBUG: subject: ${subject}`);
+    console.log(`DEBUG: body: ${body}`);
+
+    const response = sendEmail(toAddress, sourceEmailAddress, subject, body);
+    console.log(`DEBUG: Sent email: ${JSON.stringify(response)}`);
 
     return {
       status: 200,

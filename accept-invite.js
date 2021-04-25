@@ -12,12 +12,14 @@ export const main = handler(async (event, context) => {
     console.log(`DEBUG: data: ${data}`);
     console.log(`DEBUG: tableName: ${tableName}`);
 
-    const invite = await getItem(tableName, { inviteId });
+    const invite = await getItem(tableName, {
+      id: inviteId,
+    });
 
     if (invite) {
     }
 
-    console.log(invite);
+    console.log(`DEBUG: invite: ${JSON.stringify(invite)}`);
 
     return {
       status: invite ? 200 : 404,

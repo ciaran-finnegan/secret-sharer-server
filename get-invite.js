@@ -8,13 +8,15 @@ export const main = handler(async (event, context) => {
     const inviteId = data.inviteId;
     const tableName = process.env.invitesTableName;
 
-    console.log(`DEBUG: Event: ${event}`);
-    console.log(`DEBUG: data: ${data}`);
+    console.log(`DEBUG: Event: ${JSON.stringify(event)}`);
+    console.log(`DEBUG: data: ${JSON.stringify(data)}`);
     console.log(`DEBUG: tableName: ${tableName}`);
 
-    const invite = await getItem(tableName, { inviteId });
+    const invite = await getItem(tableName, {
+      id: inviteId,
+    });
 
-    console.log(invite);
+    console.log(`DEBUG: invite: ${JSON.stringify(invite)}`);
 
     return {
       status: invite ? 200 : 404,

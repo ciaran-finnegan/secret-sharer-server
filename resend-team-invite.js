@@ -29,7 +29,7 @@ export const main = handler(async (event, context) => {
     });
 
     if (invite && invite.emailAddress) {
-      console.log(invite);
+      console.log(`DEBUG: invite: ${JSON.stringify(invite)}`);
       console.log("TODO: SEND EMAIL HERE");
 
       const toAddresses = [invite.emailAddress];
