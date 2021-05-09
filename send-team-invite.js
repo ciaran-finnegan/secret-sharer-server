@@ -23,7 +23,7 @@ export const main = handler(async (event, context) => {
       3. Return.
     */
 
-    await putItem(tableName, id, data);
+    await putItem(tableName, { id }, data);
 
     const toAddress = [data.emailAddress];
     const sourceEmailAddress = process.env.sendEmailInviteFrom;
@@ -32,7 +32,7 @@ export const main = handler(async (event, context) => {
     You have been invited to activate your Vanish.link account.
     Please click on the link below to sign-up (make sure to use the e-mail address this e-mail was sent to).
     
-    https://vanish.link/signup
+    https://vanish.link/invites/accept/${id}
     
     Thanks,
     
@@ -43,7 +43,12 @@ export const main = handler(async (event, context) => {
     console.log(`DEBUG: subject: ${subject}`);
     console.log(`DEBUG: body: ${body}`);
 
-    const response = sendEmail(toAddress, sourceEmailAddress, subject, body);
+    const response = await sendEmail(
+      toAddress,
+      sourceEmailAddress,
+      subject,
+      body
+    );
     console.log(`DEBUG: Sent email: ${JSON.stringify(response)}`);
 
     return {

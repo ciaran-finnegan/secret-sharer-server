@@ -30,13 +30,27 @@ export default async function sendEmail(
     Source: sourceEmailAddress,
   };
 
-  return ses
-    .sendEmail(params)
-    .promise()
-    .then((response) => {
-      console.log(`DEBUG:: Successfully Sent Email: ${response}}`);
-    })
-    .catch((error) => {
-      console.error(`ERROR:: Failed to send email: ${error}}`);
+  console.log(params);
+
+  // return ses
+  //   .sendEmail(params)
+  //   .promise()
+  //   .then((response) => {
+  //     console.log(`DEBUG:: Successfully Sent Email: ${response}}`);
+  //   })
+  //   .catch((error) => {
+  //     console.error(`ERROR:: Failed to send email: ${error}}`);
+  //   });
+
+  return new Promise((resolve, reject) => {
+    ses.sendEmail(params, (error, response) => {
+      if (error) {
+        console.error(`ERROR:: Failed to send email: ${error}}`);
+        reject(error);
+      } else {
+        console.log(`DEBUG:: Successfully Sent Email: ${response}}`);
+        resolve(response);
+      }
     });
+  });
 }
