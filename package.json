@@ -6,9 +6,9 @@
   },
   "dependencies": {
     "amazon-cognito-identity-js": "^4.5.7",
-    "aws-amplify": "^3.3.7",
+    "aws-amplify": "^4.2.8",
     "lodash": "^4.17.20",
-    "serverless": "^1.77.1",
+    "serverless": "^2.1.0",
     "stripe": "^8.115.0",
     "uuid": "^7.0.3"
   },
