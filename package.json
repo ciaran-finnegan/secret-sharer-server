@@ -5,7 +5,7 @@
     "deploy:function": "serverless deploy --function"
   },
   "dependencies": {
-    "amazon-cognito-identity-js": "^4.5.7",
+    "amazon-cognito-identity-js": "4.6.3",
     "aws-amplify": "^3.4.3",
     "lodash": "4.17.21",
     "serverless": "^1.82.0",
