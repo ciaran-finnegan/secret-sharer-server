@@ -6260,15 +6260,15 @@ dot-qs@0.2.0:
   resolved "https://registry.npmjs.org/dot-qs/-/dot-qs-0.2.0.tgz"
   integrity sha1-02UX/iS3zaYfznpQJqACSvr1pDk=
 
-dotenv-expand@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.npmjs.org/dotenv-expand/-/dotenv-expand-5.1.0.tgz"
-  integrity sha512-YXQl1DSa4/PQyRfgrv6aoNjhasp/p4qs9FjJ4q4cQk+8m4r6k4ZSiEyytKG8f8W9gi8WsQtIObNmKd+tMzNTmA==
+dotenv-expand@^8.0.3:
+  version "8.0.3"
+  resolved "https://registry.npmjs.org/dotenv-expand/-/dotenv-expand-8.0.3.tgz"
+  integrity sha512-SErOMvge0ZUyWd5B0NXMQlDkN+8r+HhVUsxgOO7IoPDOdDRD2JjExpN6y3KnFR66jsJMwSn1pqIivhU5rcJiNg==
 
-dotenv@^10.0.0:
-  version "10.0.0"
-  resolved "https://registry.npmjs.org/dotenv/-/dotenv-10.0.0.tgz"
-  integrity sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==
+dotenv@^16.0.1:
+  version "16.0.3"
+  resolved "https://registry.npmjs.org/dotenv/-/dotenv-16.0.3.tgz"
+  integrity sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==
 
 dotenv@^8.2.0:
   version "8.2.0"
@@ -11391,14 +11391,14 @@ serverless-bundle@^2.0.0:
     typescript "^3.8.3"
     webpack "^4.35.3"
 
-serverless-dotenv-plugin@3.12.2:
-  version "3.12.2"
-  resolved "https://registry.npmjs.org/serverless-dotenv-plugin/-/serverless-dotenv-plugin-3.12.2.tgz"
-  integrity sha512-uyukgQkZCWu+Kee+E0XQEmPlMWHHEEN+T9Kp+77VwZx4B3nfjIwd6rEyi5hCiqk1+RqBMc9NME3NP94b04dQFg==
+serverless-dotenv-plugin@4.0.2:
+  version "4.0.2"
+  resolved "https://registry.npmjs.org/serverless-dotenv-plugin/-/serverless-dotenv-plugin-4.0.2.tgz"
+  integrity sha512-MOXsSSuJPMAiNp7bVvvCC+ahmEMMohlaPpaVU2w4wFgMVSvs+BU7xIwQGv/7TTMNdjYVS/W2JoS5ZSkCdjHzCg==
   dependencies:
     chalk "^4.1.2"
-    dotenv "^10.0.0"
-    dotenv-expand "^5.1.0"
+    dotenv "^16.0.1"
+    dotenv-expand "^8.0.3"
 
 serverless-offline@^6.5.0:
   version "6.5.0"
