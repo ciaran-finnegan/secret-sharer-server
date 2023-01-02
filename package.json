@@ -15,7 +15,7 @@
   "name": "secret-sharer",
   "devDependencies": {
     "aws-sdk": "^2.729.0",
-    "serverless-bundle": "^2.0.0",
+    "serverless-bundle": "^5.5.0",
     "serverless-dotenv-plugin": "4.0.2",
     "serverless-offline": "^6.5.0"
   }
